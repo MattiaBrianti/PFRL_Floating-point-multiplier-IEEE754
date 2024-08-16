@@ -29,4 +29,4 @@ begin
     T3 <= EXP_X(7) or EXP_X(6) or EXP_X(5) or EXP_X(4) or EXP_X(3) or EXP_X(2) or EXP_X(1) or EXP_X(0);
     T4 <= EXP_Y(7) or EXP_Y(6) or EXP_Y(5) or EXP_Y(4) or EXP_Y(3) or EXP_Y(2) or EXP_Y(1) or EXP_Y(0);
 
-end EDGE_CASES_CHECK;
+end RTL;
