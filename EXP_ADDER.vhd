@@ -9,6 +9,7 @@ entity EXP_ADDER is
         EXP_Y : in STD_LOGIC_VECTOR (7 downto 0);
         SUM : out STD_LOGIC_VECTOR (8 downto 0);
     );
+end EXP_ADDER;
 
 architecture RTL of EXP_ADDER is
     signal CARRY : STD_LOGIC_VECTOR (7 downto 0);
