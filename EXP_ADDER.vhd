@@ -23,5 +23,19 @@ architecture RTL of EXP_ADDER is
             S : out STD_LOGIC_VECTOR (N + 1 downto 0)
         );
     end component;
-
-end EXP_ADDER;
+    
+    begin
+        -- Instantiate the CSA component
+        U1: CSA
+            generic map (N => 8)
+            port map (
+                X => EXP_X,
+                Y => EXP_Y,
+                Z => (others => '0'), -- Assuming Z is zero for this example
+                S => SUM_TEMP
+            );
+    
+        -- Assign the result to the output port
+        SUM <= SUM_TEMP;
+    
+    end RTL;
