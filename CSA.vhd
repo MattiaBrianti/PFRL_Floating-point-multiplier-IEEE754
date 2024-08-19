@@ -11,7 +11,7 @@ entity CSA is
             X : in STD_LOGIC_VECTOR (N - 1 downto 0);
             Y : in STD_LOGIC_VECTOR (N - 1 downto 0);
             Z : in STD_LOGIC_VECTOR (N - 1 downto 0);
-            S : out STD_LOGIC_VECTOR (N + 1 downto 0);
+            S : out STD_LOGIC_VECTOR (N + 1 downto 0)
       );
 end CSA;
 
@@ -34,7 +34,7 @@ architecture RTL of CSA is
       component HA is
             port (
                   X : in STD_LOGIC;
-                  Y : in STD_LOGIC;
+                  CIN : in STD_LOGIC;
                   S : out STD_LOGIC;
                   COUT : out STD_LOGIC
             );
@@ -66,7 +66,7 @@ begin
       half_adder : HA
       port map(
             X => CS(N - 1),
-            Y => CIN(N - 1),
+            CIN => CIN(N - 1),
             S => S(N),
             COUT => S(N + 1)
       );
