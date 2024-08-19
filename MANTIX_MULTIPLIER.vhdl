@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 entity Multiplier is
     generic (
-        N : positive := 32
+        N : positive := 23
     );
     port (
         A, B : in  std_logic_vector(N-1 downto 0);
