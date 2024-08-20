@@ -4,9 +4,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 entity CSA is
-
       generic (N : INTEGER := 32);
-
       port (
             X : in STD_LOGIC_VECTOR (N - 1 downto 0);
             Y : in STD_LOGIC_VECTOR (N - 1 downto 0);
