@@ -37,6 +37,7 @@ begin
         "00011" when (X(3) = '1') else
         "00010" when (X(2) = '1') else
         "00001" when (X(1) = '1') else
-        "00000";
+        "00000" when (X(0) = '1') else
+        "11111";
 
 end RTL;
