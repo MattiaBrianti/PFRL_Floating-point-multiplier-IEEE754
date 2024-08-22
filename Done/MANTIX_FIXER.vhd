@@ -10,7 +10,7 @@ entity MANTIX_FIXER is
         EXP_X : in STD_LOGIC_VECTOR (7 downto 0); -- 8-bit exponent
         EXP_Y : in STD_LOGIC_VECTOR (7 downto 0); -- 8-bit exponent
 
-        FIXED_MANT_X : out STD_LOGIC_VECTOR (23 downto 0) -- 24-bit mantissa
+        FIXED_MANT_X : out STD_LOGIC_VECTOR (23 downto 0); -- 24-bit mantissa
         FIXED_MANT_Y : out STD_LOGIC_VECTOR (23 downto 0) -- 24-bit mantissa
     );
 end MANTIX_FIXER;
