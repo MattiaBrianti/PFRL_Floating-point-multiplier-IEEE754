@@ -1,52 +1,53 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
 
-library ieee;
-use ieee.std_logic_1164.all;
-
-entity TB_CSA is
-end TB_CSA;
-
-architecture behavior of TB_CSA is
-
+ENTITY TB_CSA IS
+END TB_CSA;
+ 
+ARCHITECTURE behavior OF TB_CSA IS 
+ 
     -- Component Declaration for the Unit Under Test (UUT)
-
-    component CSA
-        port (
-            X : in STD_LOGIC_VECTOR(31 downto 0);
-            Y : in STD_LOGIC_VECTOR(31 downto 0);
-            Z : in STD_LOGIC_VECTOR(31 downto 0);
-            S : out STD_LOGIC_VECTOR(33 downto 0)
+ 
+    COMPONENT CSA
+    PORT(
+	         X : in STD_LOGIC_VECTOR (N - 1 downto 0);
+            Y : in STD_LOGIC_VECTOR (N - 1 downto 0);
+            Z : in STD_LOGIC_VECTOR (N - 1 downto 0);
+            S : out STD_LOGIC_VECTOR (N downto 0)
         );
-    end component;
-    --Inputs
-    signal X : STD_LOGIC_VECTOR(31 downto 0);
-    signal Y : STD_LOGIC_VECTOR(31 downto 0);
-    signal Z : STD_LOGIC_VECTOR(31 downto 0);
+    END COMPONENT;
+	 --inputs
+	         signal X : STD_LOGIC_VECTOR (N - 1 downto 0);
+            signal Y : STD_LOGIC_VECTOR (N - 1 downto 0);
+            signal Z : STD_LOGIC_VECTOR (N - 1 downto 0);
+	--outputs
+	         signal S: STD_LOGIC_VECTOR(N downto 0);
+ 
+BEGIN
+ 
+	-- Instantiate the Unit Under Test (UUT)
+   uut: CSA PORT MAP (
+	X => X;
+	Y=> Y;
+	Z=> Z;
+	S=> S;
+        );
 
-    --Outputs
-    signal S : STD_LOGIC_VECTOR(33 downto 0);
+   
+   process
+   begin		
+       X <= "000000000000000000000000000000000000000000000000";
+    Y <= "000000000000000000000000000000000000000000000001";
+    Z <= "000000000000000000000000000000000000000000000001";
+    wait for 20 ns;
 
-begin
+    X <= "000000000000000000000000000000000000000000000000";
+    Y <= "000000000000000000000000000000000000000000000000";
+    Z <= "000000000000000000000000000000000000000000000001";
+    wait for 20 ns;
 
-    -- Instantiate the Unit Under Test (UUT)
-    uut : CSA port map(
-        X => X,
-        Y => Y,
-        Z => Z,
-        S => S
-    );
-    -- Stimulus process
-    process
-    begin
-
-        X <= "10101011100010101111001000101110";
-        Y <= "10101101100001101100011010110110";
-        Z <= "10101101111000100001000000100000";
-        wait for 20 ns;
-
-        X <= "10011111001010011000000101011001";
-        Y <= "10001110110010101100000000101011";
-        Z <= "11001110101001101110001011000011";
-        wait;
-    end process;
-
-end;
+    X <= "000010000010000000000001000000000000000000010000";
+    Y <= "100000000000000000000000000000000000000000010000";
+    Z <= "100000100000000000000000000000000000000000000001";
+    wait for 20 ns;
+END;
