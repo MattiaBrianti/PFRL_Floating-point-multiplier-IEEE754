@@ -28,7 +28,7 @@ architecture RTL of Multiplier is
     signal partial_products : partial_product_array;
     signal conc_bits: std_logic_vector;
     signal S : std_logic_vector(2*N-1 downto 0); --sum of partial products
-    signal partial_sum_1: is array (0 to 7) of std_logic_vector(2*N-1 downto 0); --array of 8 partial sums of 48 bits
+    signal partial_sum_1 is array (0 to 7) of std_logic_vector(2*N-1 downto 0); --array of 8 partial sums of 48 bits
     signal Cout : std_logic;
 begin
     -- Generate partial products, padding the result to do the sum
@@ -49,7 +49,7 @@ begin
             );
       end generate GEN_CSA;
 
-      partial_sum_1(8)<= "000000000000000000000000000000000000000000000000" --initialize the last partial sum to 48 zeros
+      partial_sum_1(8)<= "000000000000000000000000000000000000000000000000"; --initialize the last partial sum to 48 zeros
 
     GEN_CSA_2 : for J in 0 to 2 generate
         CSA_2 : CSA
