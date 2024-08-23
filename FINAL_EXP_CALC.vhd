@@ -14,6 +14,11 @@ entity FINAL_EXP_CALC is
     end entity FINAL_EXP_CALC;
 
     architecture RTL of FINAL_EXP_CALC is
+ 
+    signal EXP_OFFSET : std_logic_vector(9 downto 0);
+    signal PADDED_OFFSET : std_logic_vector(9 downto 0);
+    signal S_1 : std_logic_vector(10 downto 0);
+    signal S_2 : std_logic_vector(10 downto 0);
 
     component CLA is
         generic (N : INTEGER := 10);
@@ -25,6 +30,20 @@ entity FINAL_EXP_CALC is
     end component CLA;
 
     begin 
-        
-
+        PADDED_OFFSET <= "00000" & OFFSET;
+        CLA_SUB : CLA
+            generic map(N => 10)
+            port map(X => EXP_OFFSET,
+             Y => PADDED_OFFSET, 
+             S => S_1
+             );
+        CLA_ADD : CLA
+             generic map(N => 10)
+             port map(X => EXP_OFFSET,
+              Y => PADDED_OFFSET, 
+              S => S_2
+              );
+        S <= S_1 when SUB = '1' else S_2;
+    
+       
     end architecture RTL;
