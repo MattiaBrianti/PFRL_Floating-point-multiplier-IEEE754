@@ -1,68 +1,60 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
- 
- 
-ENTITY TB_FINAL_EXP_CALC IS
-END TB_FINAL_EXP_CALC;
- 
-ARCHITECTURE behavior OF TB_FINAL_EXP_CALC IS 
- 
-    COMPONENT FINAL_EXP_CALC
-    PORT(
-         EXP : IN  std_logic_vector(10 downto 0);
-         OFFSET : IN  std_logic_vector(4 downto 0);
-         SUB : IN  std_logic;
-         S : OUT  std_logic_vector
-        );
-    END COMPONENT;
-    
+library ieee;
+use ieee.std_logic_1164.all;
+entity TB_FINAL_EXP_CALC is
+end TB_FINAL_EXP_CALC;
 
+architecture behavior of TB_FINAL_EXP_CALC is
+
+   component FINAL_EXP_CALC
+      port (
+         EXP : in STD_LOGIC_VECTOR(9 downto 0);
+         OFFSET : in STD_LOGIC_VECTOR(4 downto 0);
+         SUB : in STD_LOGIC;
+         S : out STD_LOGIC_VECTOR(11 downto 0)
+      );
+   end component;
    --Inputs
-   signal EXP : std_logic_vector(10 downto 0);
-   signal OFFSET : std_logic_vector(4 downto 0);
-   signal SUB : std_logic;
+   signal EXP : STD_LOGIC_VECTOR(9 downto 0);
+   signal OFFSET : STD_LOGIC_VECTOR(4 downto 0);
+   signal SUB : STD_LOGIC;
 
- 	--Outputs
-   signal S : std_logic_vector(9 downto 0);
-   
- 
-BEGIN
- 
-	-- Instantiate the Unit Under Test (UUT)
-   uut: FINAL_EXP_CALC PORT MAP (
-          EXP => EXP,
-          OFFSET => OFFSET,
-          SUB => SUB,
-          S => S
-        );
+   --Outputs
+   signal S : STD_LOGIC_VECTOR(11 downto 0);
+begin
+
+   -- Instantiate the Unit Under Test (UUT)
+   uut : FINAL_EXP_CALC port map(
+      EXP => EXP,
+      OFFSET => OFFSET,
+      SUB => SUB,
+      S => S
+   );
 
    -- Stimulus process
    process
    begin
-	
-      -- Expected 0000000000
-      EXP <= "00000000001";
+
+      -- TODO capire perchè esce un 1 di carry e cosa vuol dire
+      EXP <= "0000000001";
       OFFSET <= "00001";
-		SUB <= '1';
+      SUB <= '1';
       wait for 20 ns;
-		
-		-- Expected 0000011110
-		EXP <= "00000110010";
+
+      -- Expected 0000011110
+      EXP <= "0000110010";
       OFFSET <= "10100";
-		SUB <= '1';
+      SUB <= '1';
       wait for 20 ns;
-      
-		--Expected 0000000010
-      EXP <= "00000000001";
+
+      --Expected 0000000010
+      EXP <= "0000000001";
       OFFSET <= "00001";
-		SUB <= '0';
+      SUB <= '0';
       wait for 20 ns;
-		
-		--Expected 
-      EXP <= "00000000001";
+      EXP <= "0000000001";
       OFFSET <= "11111";
-		SUB <= '0';
+      SUB <= '0';
       wait;
    end process;
 
-END;
+end;
