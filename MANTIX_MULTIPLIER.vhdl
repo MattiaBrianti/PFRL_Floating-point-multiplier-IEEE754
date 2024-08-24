@@ -1,6 +1,5 @@
 library ieee;
 use ieee.std_logic_1164.all;
---use ieee.numeric_std.all;
 
 entity Multiplier is
     generic (
@@ -28,8 +27,10 @@ architecture RTL of Multiplier is
     signal partial_products : partial_product_array;
     signal conc_bits : STD_LOGIC_VECTOR;
     signal S : STD_LOGIC_VECTOR(2 * N - 1 downto 0); --sum of partial products
-    type partial_sum_1 is array (0 to 7) of STD_LOGIC_VECTOR(2 * N - 1 downto 0); --array of 8 partial sums of 48 bits
-    type partial_sum_2 is array (0 to 3) of STD_LOGIC_VECTOR(2 * N - 1 downto 0); --array of 8 partial sums of 48 bits
+    type partial_sum_1_array is array (0 to 7) of STD_LOGIC_VECTOR(2 * N - 1 downto 0); --array of 8 partial sums of 48 bits
+    signal partial_sum_1 : partial_sum_1_array;
+    type partial_sum_2_array is array (0 to 3) of STD_LOGIC_VECTOR(2 * N - 1 downto 0); --array of 8 partial sums of 48 bits
+    signal partial_sum_2 : partial_sum_2_array;
     signal Cout : STD_LOGIC;
 begin
     -- Generate partial products, padding the result to do the sum
@@ -61,7 +62,7 @@ begin
             X => partial_sum_1(J * 3),
             Y => partial_sum_1(J * 3 + 1),
             Z => partial_sum_1(J * 3 + 2),
-            S => Cout & partial_sum_2(J)
+            S => partial_sum_2(J)
         );
     end generate GEN_CSA_2;
 
@@ -71,7 +72,7 @@ begin
         X => partial_sum_2(0),
         Y => partial_sum_2(1),
         Z => partial_sum_2(2),
-        S => Cout & P
+        S => P
     );
 
 end architecture RTL;
