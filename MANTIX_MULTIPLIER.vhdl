@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity Multiplier is
+entity MANTIX_MULTIPLIER is
     generic (
         N : POSITIVE := 24
     );
@@ -9,9 +9,9 @@ entity Multiplier is
         A, B : in STD_LOGIC_VECTOR(N - 1 downto 0);
         P : out STD_LOGIC_VECTOR(2 * N - 1 downto 0)
     );
-end entity Multiplier;
+end entity MANTIX_MULTIPLIER;
 
-architecture RTL of Multiplier is
+architecture RTL of MANTIX_MULTIPLIER is
     component CSA is
         generic (
             N : POSITIVE
@@ -25,7 +25,6 @@ architecture RTL of Multiplier is
 
     type partial_product_array is array (0 to N - 1) of STD_LOGIC_VECTOR(2 * N - 1 downto 0); --array of 24 partial products of 48 bits
     signal partial_products : partial_product_array;
-    signal conc_bits : STD_LOGIC_VECTOR;
     signal S : STD_LOGIC_VECTOR(2 * N - 1 downto 0); --sum of partial products
     type partial_sum_1_array is array (0 to 7) of STD_LOGIC_VECTOR(2 * N - 1 downto 0); --array of 8 partial sums of 48 bits
     signal partial_sum_1 : partial_sum_1_array;
@@ -37,8 +36,7 @@ begin
     gen_partial_products : for i in 0 to N - 1 generate
         partial_products(i) <= (others => '0') when B(i) = '0' else
         A; --when B(i) is 0, partial product is 48 zeros
-        conc_bits <= (23 - i downto 0 => '0'); --create a string of 23-i zeros
-        partial_products(i) <= conc_bits & A & (others => '0'); --create a partial product by appending 23-i zeros to A and i zeros to the right
+        partial_products(i) <= (23 - i downto 0 => '0') & A & (others => '0'); --create a partial product by appending 23-i zeros to A and i zeros to the right
     end generate;
 
     -- Because a CSA sum three numbers at a time, we'll need 8 CSA to sum 24 numbers
