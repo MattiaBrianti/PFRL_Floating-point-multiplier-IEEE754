@@ -4,10 +4,10 @@ use ieee.std_logic_1164.all;
 entity FINAL_EXP_CALC is
     generic (N : INTEGER := 24);
     port (
-        EXP : in STD_LOGIC_VECTOR(9 downto 0);
+        EXP : in STD_LOGIC_VECTOR(9 downto 0); -- è un numero con segno
         OFFSET : in STD_LOGIC_VECTOR(4 downto 0);
         SUB : in STD_LOGIC;
-        S : out STD_LOGIC_VECTOR(11 downto 0)
+        S : out STD_LOGIC_VECTOR(9 downto 0)
     );
 end entity FINAL_EXP_CALC;
 
@@ -51,6 +51,6 @@ begin
         S => S_2
     );
 
-    S <= (S_1) when SUB = '1' else
-        (S_2);
+    S <= (S_1(9 downto 0)) when SUB = '1' else
+        (S_2(9 downto 0));
 end architecture RTL;

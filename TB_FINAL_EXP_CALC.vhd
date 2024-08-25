@@ -1,16 +1,20 @@
+
 library ieee;
 use ieee.std_logic_1164.all;
+
 entity TB_FINAL_EXP_CALC is
 end TB_FINAL_EXP_CALC;
 
 architecture behavior of TB_FINAL_EXP_CALC is
+
+   -- Component Declaration for the Unit Under Test (UUT)
 
    component FINAL_EXP_CALC
       port (
          EXP : in STD_LOGIC_VECTOR(9 downto 0);
          OFFSET : in STD_LOGIC_VECTOR(4 downto 0);
          SUB : in STD_LOGIC;
-         S : out STD_LOGIC_VECTOR(11 downto 0)
+         S : out STD_LOGIC_VECTOR(9 downto 0)
       );
    end component;
    --Inputs
@@ -19,7 +23,8 @@ architecture behavior of TB_FINAL_EXP_CALC is
    signal SUB : STD_LOGIC;
 
    --Outputs
-   signal S : STD_LOGIC_VECTOR(11 downto 0);
+   signal S : STD_LOGIC_VECTOR(9 downto 0);
+
 begin
 
    -- Instantiate the Unit Under Test (UUT)
@@ -30,31 +35,51 @@ begin
       S => S
    );
 
-   -- Stimulus process
    process
    begin
 
-      -- TODO capire perchè esce un 1 di carry e cosa vuol dire
-      EXP <= "0000000001";
-      OFFSET <= "00001";
+      -- CASO POSITIVO - POSITIVO = POSITIVO
+      -- expected 01000(10-2=8)
+      EXP <= "0000001010";
+      OFFSET <= "00010";
       SUB <= '1';
       wait for 20 ns;
 
-      -- Expected 0000011110
-      EXP <= "0000110010";
-      OFFSET <= "10100";
+      -- CASO POSITIVO - POSITIVO = NEGATIVO
+      -- expected 1011(10-15=-5)
+      EXP <= "0000001010";
+      OFFSET <= "01111";
       SUB <= '1';
       wait for 20 ns;
 
-      --Expected 0000000010
-      EXP <= "0000000001";
-      OFFSET <= "00001";
+      -- CASO NEGATIVO - POSITIVO = NEGATIVO
+      -- expected 1011101(-20-15=-35)
+      EXP <= "1111101100";
+      OFFSET <= "01111";
+      SUB <= '1';
+      wait for 20 ns;
+
+      -- CASO POSITIVO + POSITIVO = POSITIVO
+      -- expected 010100(5+15=20)
+      EXP <= "0000000101";
+      OFFSET <= "01111";
       SUB <= '0';
       wait for 20 ns;
-      EXP <= "0000000001";
-      OFFSET <= "11111";
+
+      -- CASO NEGATIVO + POSITIVO = POSITIVO
+      -- expected 0101(-10+15=5)
+      EXP <= "1111110110";
+      OFFSET <= "01111";
+      SUB <= '0';
+      wait for 20 ns;
+
+      -- CASO NEGATIVO + POSITIVO = NEGATIVO
+      -- expected 1011(-20+15=-5)
+      EXP <= "1111101100";
+      OFFSET <= "01111";
       SUB <= '0';
       wait;
+
    end process;
 
 end;
