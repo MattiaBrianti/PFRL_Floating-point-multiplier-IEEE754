@@ -9,7 +9,7 @@ entity CSA is
             X : in STD_LOGIC_VECTOR (N - 1 downto 0);
             Y : in STD_LOGIC_VECTOR (N - 1 downto 0);
             Z : in STD_LOGIC_VECTOR (N - 1 downto 0);
-            S : out STD_LOGIC_VECTOR (N downto 0)
+            S : out STD_LOGIC_VECTOR (N + 1 downto 0)
       );
 end CSA;
 
