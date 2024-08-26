@@ -9,16 +9,36 @@ architecture behavior of TB_MANTIX_MULTIPLIER is
 
   -- Component Declaration for the Unit Under Test (UUT)
 
-  component MANTIX_MULTIPLIER
+  entity MANTIX_MULTIPLIER is
     port (
       A : in STD_LOGIC_VECTOR(23 downto 0);
       B : in STD_LOGIC_VECTOR(23 downto 0);
       P : out STD_LOGIC_VECTOR(47 downto 0)
     );
-  end component;
+  end entity;
+
+  architecture Behavioral of MANTIX_MULTIPLIER is
+    signal TEMP_A : STD_LOGIC_VECTOR(23 downto 0);
+    -- Other signal declarations
+  begin
+
+    -- Assign A to TEMP_A
+    TEMP_A <= A;
+
+    -- Example process to show TEMP_A usage
+    process (A, B)
+    begin
+      -- Ensure TEMP_A is used correctly
+      -- Example operation using TEMP_A
+      -- P <= some_operation_using_TEMP_A_and_B(TEMP_A, B);
+    end process;
+
+    -- Other processes and concurrent statements
+
+  end Behavioral;
   --Inputs
-  signal A : STD_LOGIC_VECTOR(23 downto 0);
-  signal B : STD_LOGIC_VECTOR(23 downto 0);
+  signal A : STD_LOGIC_VECTOR(23 downto 0):= (others =>'0');
+  signal B : STD_LOGIC_VECTOR(23 downto 0):= (others =>'0');
 
   --Outputs
   signal P : STD_LOGIC_VECTOR(47 downto 0);

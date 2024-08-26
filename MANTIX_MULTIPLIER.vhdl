@@ -14,7 +14,7 @@ end entity MANTIX_MULTIPLIER;
 architecture RTL of MANTIX_MULTIPLIER is
     component CSA is
         generic (
-            N : POSITIVE
+            N : INTEGER
         );
         port (
             X, Y, Z : in STD_LOGIC_VECTOR(N-1 downto 0);
@@ -28,7 +28,7 @@ architecture RTL of MANTIX_MULTIPLIER is
     type partial_sum_1_array is array (0 to 8) of STD_LOGIC_VECTOR(48 downto 0); --array of 8 partial sums of 49 bits
     signal partial_sum_1 : partial_sum_1_array;
 	 
-	 type partial_sum_1_array_fixed is array (0 to 8) of STD_LOGIC_VECTOR(47 downto 0); --array of 8 partial sums of 49 bits
+	 type partial_sum_1_array_fixed is array (0 to 8) of STD_LOGIC_VECTOR(47 downto 0); --array of 8 partial sums of 48 bits
     signal partial_sum_1_fixed : partial_sum_1_array_fixed;
 	 
     type partial_sum_2_array is array (0 to 2) of STD_LOGIC_VECTOR(49 downto 0); --array of 3 partial sums of 49 bits
@@ -38,17 +38,26 @@ architecture RTL of MANTIX_MULTIPLIER is
     signal partial_sum_2_fixed : partial_sum_2_array_fixed;
 	 
 	 signal P_TEMP: std_logic_vector(49 downto 0);
+	 signal TEMP_A: std_logic_vector(23 downto 0);
+	 signal TEMP_B: std_logic_vector(23 downto 0);
+	 
     
 	 
-begin
-    partial_products(0) <= (others => '0') when B(0) = '0' else
-    "00000000000000000000000" & A; -- For i=0, no zeros on the right
-    partial_products(23) <= (others => '0') when B(23) = '0' else
-    A & "00000000000000000000000"; --Last case, no zeros on the left
+begin 
+    
+	 process (A,B)
+    begin
+    TEMP_A <= A;
+    TEMP_B <= B;
+    end process;
+
+    partial_products(0) <= "00000000000000000000000" & TEMP_A when TEMP_B(0) = '1' else "00000000000000000000000000000000000000000000000" ; -- For i=0, no zeros on the right
+    partial_products(23) <= "00000000000000000000000000000000000000000000000" when TEMP_B(23) = '0' else
+    TEMP_A & "00000000000000000000000"; --Last case, no zeros on the left
 
     gen_partial_products : for i in 1 to 23 generate
-        partial_products(i) <= (others => '0') when B(i) = '0' else
-        (23 - i => '0') & A & (i => '0');
+        partial_products(i) <= "00000000000000000000000000000000000000000000000" when TEMP_B(i) = '0' else
+        (23 - i => '0') & TEMP_A & (i => '0');
     end generate gen_partial_products;
 
     -- Because a CSA sum three numbers at a time, we'll need 8 CSA to sum 24 numbers
