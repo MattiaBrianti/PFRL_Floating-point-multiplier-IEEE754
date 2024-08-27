@@ -9,33 +9,13 @@ architecture behavior of TB_MANTIX_MULTIPLIER is
 
   -- Component Declaration for the Unit Under Test (UUT)
 
-  entity MANTIX_MULTIPLIER is
+  component MANTIX_MULTIPLIER
     port (
       A : in STD_LOGIC_VECTOR(23 downto 0);
       B : in STD_LOGIC_VECTOR(23 downto 0);
       P : out STD_LOGIC_VECTOR(47 downto 0)
     );
-  end entity;
-
-  architecture Behavioral of MANTIX_MULTIPLIER is
-    signal TEMP_A : STD_LOGIC_VECTOR(23 downto 0);
-    -- Other signal declarations
-  begin
-
-    -- Assign A to TEMP_A
-    TEMP_A <= A;
-
-    -- Example process to show TEMP_A usage
-    process (A, B)
-    begin
-      -- Ensure TEMP_A is used correctly
-      -- Example operation using TEMP_A
-      -- P <= some_operation_using_TEMP_A_and_B(TEMP_A, B);
-    end process;
-
-    -- Other processes and concurrent statements
-
-  end Behavioral;
+  end component;
   --Inputs
   signal A : STD_LOGIC_VECTOR(23 downto 0):= (others =>'0');
   signal B : STD_LOGIC_VECTOR(23 downto 0):= (others =>'0');
@@ -55,15 +35,15 @@ begin
   -- Stimulus process
   process
   begin
-    -- expected 01001011111101100101000100110101011110011000101
+    -- expected 001001011111101100101000100110101011110011000101
     A <= "001101111001110000011011";
     B <= "101011101101100010011111";
-    wait for 20 ns;
+    wait for 100 ns;
 
     -- expected 011101100100101100101000000110101110101010111100
     A <= "110001101001011000111111";
     B <= "100110000111111001000100";
-    wait for 20 ns;
+    wait for 100 ns;
 
     -- expected 010010011100100111010101010101001101100001100100
     A <= "100110101010101000011100";
