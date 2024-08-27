@@ -10,6 +10,8 @@ entity HA is
 	);
 end HA;
 
+-- Ritardo stimato 12 ns (6,2 ns exactly)
+
 architecture RTL of HA is
 begin
 

@@ -10,6 +10,7 @@ entity EXP_ADDER is
     );
 end EXP_ADDER;
 
+-- Ritardo stimato 15 ns (9,100 exactly)
 architecture RTL of EXP_ADDER is
     signal EXP_X_CORRECT : STD_LOGIC_VECTOR (7 downto 0);
     signal EXP_Y_CORRECT : STD_LOGIC_VECTOR (7 downto 0);

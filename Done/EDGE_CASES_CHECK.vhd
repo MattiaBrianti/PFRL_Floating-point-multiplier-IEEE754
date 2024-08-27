@@ -13,6 +13,7 @@ entity EDGE_CASES_CHECK is
     );
 end EDGE_CASES_CHECK;
 
+-- Ritardo stimato 15 ns (9,250 exactly)
 -- '00' NoFlag
 -- '01' infinity
 -- '10' Invalid (at least one NaN)
@@ -36,3 +37,4 @@ begin
         "11" when (EXP_X = "00000000" and EXP_Y = "00000000") else
         "00";
 end RTL;
+-- 10010101110110000001111

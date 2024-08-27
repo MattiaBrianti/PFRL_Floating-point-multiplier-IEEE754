@@ -15,6 +15,8 @@ entity MANTIX_FIXER is
     );
 end MANTIX_FIXER;
 
+-- Ritardo stimato 18 ns (12,804 ns exactly)
+
 architecture RTL of MANTIX_FIXER is
 
     signal T1_X : STD_LOGIC;

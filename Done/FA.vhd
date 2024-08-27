@@ -13,6 +13,7 @@ entity FA is
 	);
 end FA;
 
+-- Ritardo stimato 12 ns (6,400 exactly)
 architecture RTL of FA is
 begin
 

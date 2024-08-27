@@ -9,6 +9,8 @@ entity BIAS_SUBTRACTOR is
     );
 end entity BIAS_SUBTRACTOR;
 
+-- Ritardo stimato di 12 ns (8,362ns exactly)
+
 architecture RTL of BIAS_SUBTRACTOR is
 
     signal CS : STD_LOGIC_VECTOR(9 downto 0);

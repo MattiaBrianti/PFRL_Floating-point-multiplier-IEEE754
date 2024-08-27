@@ -10,6 +10,8 @@ entity CLA is
     );
 end CLA;
 
+-- Ritardo stimato 20 ns (13,855 exactly)
+
 architecture RTL of CLA is
     component FA is
         port (
