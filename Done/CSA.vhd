@@ -1,19 +1,18 @@
--- Finished
-
 library ieee;
 use ieee.std_logic_1164.all;
 
 entity CSA is
-      generic (N : INTEGER := 32);
+
+      generic (N : INTEGER);
+
       port (
             X : in STD_LOGIC_VECTOR (N - 1 downto 0);
             Y : in STD_LOGIC_VECTOR (N - 1 downto 0);
             Z : in STD_LOGIC_VECTOR (N - 1 downto 0);
-            S : out STD_LOGIC_VECTOR (N + 1 downto 0)
+            S : out STD_LOGIC_VECTOR (N+1 downto 0)
       );
 end CSA;
 
--- Ritardo stimato 27 ns (21,275 exactly)
 architecture RTL of CSA is
 
       signal CS : STD_LOGIC_VECTOR (N - 1 downto 0);
