@@ -11,6 +11,8 @@ entity FINAL_EXP_CALC is
     );
 end entity FINAL_EXP_CALC;
 
+-- Ritardo stimato 16 ns (10,803 ns exactly)
+
 architecture RTL of FINAL_EXP_CALC is
 
     signal PADDED_OFFSET_ADD : STD_LOGIC_VECTOR(9 downto 0);

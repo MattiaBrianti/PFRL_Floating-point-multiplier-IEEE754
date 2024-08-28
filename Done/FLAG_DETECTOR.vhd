@@ -11,6 +11,8 @@ entity FLAG_DETECTOR is
         INVALID : out STD_LOGIC
     );
 end FLAG_DETECTOR;
+
+-- Ritardo stimato 18 ns (12 ns exactly)
 -- '00' NoFlag
 -- '01' infinity
 -- '10' Invalid (at least one NaN)

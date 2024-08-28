@@ -13,6 +13,7 @@ entity CSA is
       );
 end CSA;
 
+-- Ritardo stimato 27 ns (21,275 exactly)
 architecture RTL of CSA is
 
       signal CS : STD_LOGIC_VECTOR (N - 1 downto 0);

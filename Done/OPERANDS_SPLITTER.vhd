@@ -5,6 +5,7 @@ use ieee.std_logic_1164.all;
 
 entity OPERANDS_SPLITTER is
 
+    -- Ritardo stimato 19 ns (12,997 ns exactly)
     port (
         X : in STD_LOGIC_VECTOR (31 downto 0);
         Y : in STD_LOGIC_VECTOR (31 downto 0);
@@ -13,7 +14,7 @@ entity OPERANDS_SPLITTER is
         EXP_X : out STD_LOGIC_VECTOR (7 downto 0);
         EXP_Y : out STD_LOGIC_VECTOR (7 downto 0);
         MANT_X : out STD_LOGIC_VECTOR (22 downto 0);
-        MANT_Y : out STD_LOGIC_VECTOR (22 downto 0);
+        MANT_Y : out STD_LOGIC_VECTOR (22 downto 0)
     );
 end OPERANDS_SPLITTER;
 

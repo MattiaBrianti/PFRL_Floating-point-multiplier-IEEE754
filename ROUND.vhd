@@ -45,8 +45,8 @@ begin
         "10111" when (MANT_EXT(23) = '1') else
         "11111";
 
-    MANT_SHIFT <= MANT_EXT(47 downto 25) when (MANT_EXT(47) = '1') else -- da capire quali bit prendere (se questi o uno dopo)
-        MANT_EXT(46 downto 24) when (MANT_EXT(46) = '1') else -- da capire quali bit prendere
+    MANT_SHIFT <= MANT_EXT(46 downto 24) when (MANT_EXT(47) = '1') else -- da capire quali bit prendere (se questi o uno dopo)
+        MANT_EXT(45 downto 23) when (MANT_EXT(46) = '1') else -- da capire quali bit prendere
         MANT_EXT(44 downto 22) when (MANT_EXT(45) = '1') else
         MANT_EXT(43 downto 21) when (MANT_EXT(44) = '1') else
         MANT_EXT(42 downto 20) when (MANT_EXT(43) = '1') else
