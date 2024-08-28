@@ -11,7 +11,7 @@ entity MANTIX_MULTIPLIER is
     );
 end entity MANTIX_MULTIPLIER;
 
--- Ritardo stimato  ns ( ns exactly)
+-- Ritardo stimato  38 ns ( 31,9 ns exactly)
 architecture RTL of MANTIX_MULTIPLIER is
     component CSA is
         generic (
