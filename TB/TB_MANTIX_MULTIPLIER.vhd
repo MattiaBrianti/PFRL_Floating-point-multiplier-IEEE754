@@ -17,8 +17,8 @@ architecture behavior of TB_MANTIX_MULTIPLIER is
     );
   end component;
   --Inputs
-  signal A : STD_LOGIC_VECTOR(23 downto 0):= (others =>'0');
-  signal B : STD_LOGIC_VECTOR(23 downto 0):= (others =>'0');
+  signal A : STD_LOGIC_VECTOR(23 downto 0) := (others => '0');
+  signal B : STD_LOGIC_VECTOR(23 downto 0) := (others => '0');
 
   --Outputs
   signal P : STD_LOGIC_VECTOR(47 downto 0);
