@@ -6,15 +6,15 @@ entity FLIP_FLOP_D is
 		CLK : in STD_LOGIC;
 		D : in STD_LOGIC;
 		Q : out STD_LOGIC;
-		RESET : in STD_LOGIC
+		RST : in STD_LOGIC
 	);
 end FLIP_FLOP_D;
 
-architecture FLIP_FLOP_D of FLIP_FLOP_D is
+architecture RTL of FLIP_FLOP_D is
 begin
-	FF : process (CLK, RESET)
+	FF : process (CLK)
 	begin
-		if (RESET = '1') then
+		if (RST = '1') then
 			Q <= '0';
 		else
 			if (CLK'event and CLK = '1') then
@@ -22,4 +22,4 @@ begin
 			end if;
 		end if;
 	end process;
-end FLIP_FLOP_D;
+end RTL;

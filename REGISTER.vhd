@@ -9,7 +9,7 @@ entity register is
 		CLK : in STD_LOGIC;
 		D : in STD_LOGIC_VECTOR (N - 1 downto 0);
 		Q : out STD_LOGIC_VECTOR (N - 1 downto 0);
-		RESET : in STD_LOGIC
+		RST : in STD_LOGIC
 	);
 
 end register;
@@ -21,7 +21,7 @@ architecture register of register is
 			CLK : in STD_LOGIC;
 			D : in STD_LOGIC;
 			Q : out STD_LOGIC;
-			RESET : in STD_LOGIC
+			RST : in STD_LOGIC
 		);
 	end component;
 
@@ -33,7 +33,7 @@ begin
 			CLK => CLK,
 			D => D (I),
 			Q => Q (I),
-			RESET => RESET
+			RST => RST
 		);
 	end generate gen_flipflop;
 end register;
