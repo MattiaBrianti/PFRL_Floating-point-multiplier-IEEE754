@@ -1,273 +1,148 @@
+
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity MULTIPLIER_IEEE754 is
-    port (
-        X : in STD_LOGIC_VECTOR(31 downto 0);
-        Y : in STD_LOGIC_VECTOR(31 downto 0);
-        RESULT : out STD_LOGIC_VECTOR(31 downto 0);
-        INVALID : out STD_LOGIC;
-        RST : in STD_LOGIC;
-        CLK : in STD_LOGIC
+entity MANTIX_MULTIPLIER is
+    generic (
+        N : POSITIVE := 24
     );
-end entity MULTIPLIER_IEEE754;
+    port (
+        A, B : in STD_LOGIC_VECTOR(N - 1 downto 0);
+        P : out STD_LOGIC_VECTOR(2 * N - 1 downto 0)
+    );
+end entity MANTIX_MULTIPLIER;
 
-architecture RTL of MULTIPLIER_IEEE754 is
-
-    -- signals that go from Reg1 to prep stage
-    signal X_R1_to_P : STD_LOGIC_VECTOR(31 downto 0);
-    signal Y_R1_to_P : STD_LOGIC_VECTOR(31 downto 0);
-
-    -- signals that go from prep stage to Reg2
-    signal FLAG_P_to_R2 : STD_LOGIC_VECTOR(1 downto 0);
-    signal S_P_to_R2 : STD_LOGIC;
-    signal EXP_X_P_to_R2 : STD_LOGIC_VECTOR(7 downto 0);
-    signal EXP_Y_P_to_R2 : STD_LOGIC_VECTOR(7 downto 0);
-    signal FIXED_MANT_X_P_to_R2 : STD_LOGIC_VECTOR(23 downto 0);
-    signal FIXED_MANT_Y_P_to_R2 : STD_LOGIC_VECTOR(23 downto 0);
-    --signals that go Reg2 to calc stage
-    signal S_R2_to_C : STD_LOGIC;
-    signal FLAG_R2_to_C : STD_LOGIC_VECTOR(1 downto 0);
-    signal EXP_X_R2_to_C : STD_LOGIC_VECTOR(7 downto 0);
-    signal EXP_Y_R2_to_C : STD_LOGIC_VECTOR(7 downto 0);
-    signal FIXED_MANT_X_R2_to_C : STD_LOGIC_VECTOR(23 downto 0);
-    signal FIXED_MANT_Y_R2_to_C : STD_LOGIC_VECTOR(23 downto 0);
-
-    --signals that go calc stage to Reg3
-    signal S_C_to_R3 : STD_LOGIC;
-    signal FLAG_C_to_R3 : STD_LOGIC_VECTOR(1 downto 0);
-    signal MANT_C_to_R3 : STD_LOGIC_VECTOR(47 downto 0);
-    signal EXP_C_to_R3 : STD_LOGIC_VECTOR(9 downto 0);
-
-    --signals that go Reg3 to output stage
-    signal S_R3_to_O : STD_LOGIC;
-    signal FLAG_R3_to_O : STD_LOGIC_VECTOR(1 downto 0);
-    signal MANT_R3_to_O : STD_LOGIC_VECTOR(47 downto 0);
-    signal EXP_R3_to_O : STD_LOGIC_VECTOR(9 downto 0);
-
-    --signals that to output stage to R4
-    signal RES_O_to_R4 : STD_LOGIC_VECTOR (31 downto 0);
-    signal INVALID_O_to_R4 : STD_LOGIC;
-
-    --signals that go from Reg4 to end
-    signal RES_R4_to_E : STD_LOGIC_VECTOR (31 downto 0);
-    signal INVALID_R4_to_E : STD_LOGIC;
-    component REG is
-        generic (N : INTEGER := 32);
-        port (
-            CLK : in STD_LOGIC;
-            D : in STD_LOGIC_VECTOR (N - 1 downto 0);
-            Q : out STD_LOGIC_VECTOR (N - 1 downto 0);
-            RST : in STD_LOGIC
+architecture RTL of MANTIX_MULTIPLIER is
+    component CSA is
+        generic (
+            N : INTEGER
         );
-    end component;
-
-    component REG_1bit is
         port (
-            CLK : in STD_LOGIC;
-            D : in STD_LOGIC;
-            Q : out STD_LOGIC;
-            RST : in STD_LOGIC
+            X, Y, Z : in STD_LOGIC_VECTOR(N - 1 downto 0);
+            S : out STD_LOGIC_VECTOR(N + 1 downto 0)
         );
-    end component;
+    end component CSA;
 
-    component PREP_STAGE is
-        port (
-            X : in STD_LOGIC_VECTOR(31 downto 0);
-            Y : in STD_LOGIC_VECTOR(31 downto 0);
-            FLAG : out STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
-            S : out STD_LOGIC;
-            EXP_X : out STD_LOGIC_VECTOR (7 downto 0);
-            EXP_Y : out STD_LOGIC_VECTOR (7 downto 0);
-            FIXED_MANT_X : out STD_LOGIC_VECTOR (23 downto 0); -- 24-bit mantissa
-            FIXED_MANT_Y : out STD_LOGIC_VECTOR (23 downto 0) -- 24-bit mantissa
-        );
-    end component;
+    type partial_product_array is array (0 to 23) of STD_LOGIC_VECTOR(46 downto 0); --array of 24 partial products of 48 bits
+    signal partial_products : partial_product_array;
 
-    component CALC_STAGE is
-        port (
-            FLAG : in STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
-            S : in STD_LOGIC;
-            EXP_X : in STD_LOGIC_VECTOR (7 downto 0);
-            EXP_Y : in STD_LOGIC_VECTOR (7 downto 0);
-            FIXED_MANT_X : in STD_LOGIC_VECTOR (23 downto 0); -- 24-bit mantissa
-            FIXED_MANT_Y : in STD_LOGIC_VECTOR (23 downto 0); -- 24-bit mantissa
-            S_OUT : out STD_LOGIC;
-            FLAG_OUT : out STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
-            P : out STD_LOGIC_VECTOR(47 downto 0);
-            exp_out : out STD_LOGIC_VECTOR(9 downto 0)
-        );
-    end component;
+    type partial_sum_1_array is array (0 to 8) of STD_LOGIC_VECTOR(48 downto 0); --array of 8 partial sums of 49 bits
+    signal partial_sum_1 : partial_sum_1_array;
 
-    component OUTPUT_STAGE is
-        port (
-            FLAG : in STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
-            S : in STD_LOGIC;
-            exp_out : in STD_LOGIC_VECTOR(9 downto 0);
-            P : in STD_LOGIC_VECTOR(47 downto 0);
-            RES_FINAL : out STD_LOGIC_VECTOR (31 downto 0);
-            INVALID : out STD_LOGIC
-        );
-    end component;
+    type partial_sum_1_array_fixed is array (0 to 8) of STD_LOGIC_VECTOR(47 downto 0); --array of 8 partial sums of 48 bits
+    signal partial_sum_1_fixed : partial_sum_1_array_fixed;
+
+    type partial_sum_2_array is array (0 to 2) of STD_LOGIC_VECTOR(49 downto 0); --array of 3 partial sums of 49 bits
+    signal partial_sum_2 : partial_sum_2_array;
+
+    type partial_sum_2_array_fixed is array (0 to 8) of STD_LOGIC_VECTOR(47 downto 0); --array of 8 partial sums of 49 bits
+    signal partial_sum_2_fixed : partial_sum_2_array_fixed;
+
+    signal P_TEMP : STD_LOGIC_VECTOR(49 downto 0);
+    signal TEMP_A : STD_LOGIC_VECTOR(23 downto 0);
+    signal TEMP_B : STD_LOGIC_VECTOR(23 downto 0);
 
 begin
-    --R1
-    --REGs in front of prep stage
-    REG_X : REG port map(
-        CLK => CLK,
-        D => X,
-        Q => X_R1_to_P,
-        RST => RST
-    );
 
-    REG_Y : REG port map(
-        CLK => CLK,
-        D => Y,
-        Q => Y_R1_to_P,
-        RST => RST
-    );
-    -- PREP STAGE
-    U0 : PREP_STAGE port map(
-        X => X_R1_to_P,
-        Y => Y_R1_to_P,
-        FLAG => FLAG_P_to_R2,
-        S => S_P_to_R2,
-        EXP_X => EXP_X_P_to_R2,
-        EXP_Y => EXP_Y_P_to_R2,
-        FIXED_MANT_X => FIXED_MANT_X_P_to_R2,
-        FIXED_MANT_Y => FIXED_MANT_Y_P_to_R2
-    );
+    TEMP_A <= A;
+    TEMP_B <= B;
 
-    --R2
-    --REGs behind PREP stage and in front of CALC stage
-    REG_FLAG : REG
-    generic map(N => 2)
-    port map(
-        CLK => CLK,
-        D => FLAG_P_to_R2,
-        Q => FLAG_R2_to_C,
-        RST => RST
-    );
+    partial_products(0) <= "00000000000000000000000" & TEMP_A when TEMP_B(0) = '1' else
+    "00000000000000000000000000000000000000000000000"; -- For i=0, no zeros on the right
+    partial_products(1) <= "0000000000000000000000" & TEMP_A & '0' when TEMP_B(1) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(2) <= "000000000000000000000" & TEMP_A & "00" when TEMP_B(2) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(3) <= "00000000000000000000" & TEMP_A & "000" when TEMP_B(3) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(4) <= "0000000000000000000" & TEMP_A & "0000" when TEMP_B(4) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(5) <= "000000000000000000" & TEMP_A & "00000" when TEMP_B(5) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(6) <= "00000000000000000" & TEMP_A & "000000" when TEMP_B(6) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(7) <= "0000000000000000" & TEMP_A & "0000000" when TEMP_B(7) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(8) <= "000000000000000" & TEMP_A & "00000000" when TEMP_B(8) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(9) <= "00000000000000" & TEMP_A & "000000000" when TEMP_B(9) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(10) <= "0000000000000" & TEMP_A & "0000000000" when TEMP_B(10) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(11) <= "000000000000" & TEMP_A & "00000000000" when TEMP_B(11) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(12) <= "00000000000" & TEMP_A & "000000000000" when TEMP_B(12) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(13) <= "0000000000" & TEMP_A & "0000000000000" when TEMP_B(13) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(14) <= "000000000" & TEMP_A & "00000000000000" when TEMP_B(14) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(15) <= "00000000" & TEMP_A & "000000000000000" when TEMP_B(15) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(16) <= "0000000" & TEMP_A & "0000000000000000" when TEMP_B(16) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(17) <= "000000" & TEMP_A & "00000000000000000" when TEMP_B(17) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(18) <= "00000" & TEMP_A & "000000000000000000" when TEMP_B(18) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(19) <= "0000" & TEMP_A & "0000000000000000000" when TEMP_B(19) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(20) <= "000" & TEMP_A & "00000000000000000000" when TEMP_B(20) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(21) <= "00" & TEMP_A & "000000000000000000000" when TEMP_B(21) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(22) <= "0" & TEMP_A & "0000000000000000000000" when TEMP_B(22) = '1' else
+    "00000000000000000000000000000000000000000000000";
+    partial_products(23) <= TEMP_A & "00000000000000000000000" when TEMP_B(23) = '1' else
+    "00000000000000000000000000000000000000000000000"; --Last case, no zeros on the left
+    -- gen_partial_products : for i in 1 to 23 generate
+    --   partial_products(i) <= "00000000000000000000000000000000000000000000000" when TEMP_B(i) = '0' else
+    --   (23 - i => '0') & TEMP_A & (i => '0');
+    --  end generate gen_partial_products;
 
-    REG_S : REG_1bit port map(
-        CLK => CLK,
-        D => S_P_to_R2,
-        Q => S_R2_to_C,
-        RST => RST
-    );
+    --Because a CSA sum three numbers at a time, we'll need 8 CSA to sum 24 numbers
+    GEN_CSA : for I in 0 to 7 generate
+        CSA_1 : CSA
+        generic map(N => 47)
+        port map(
+            X => partial_products(I * 3),
+            Y => partial_products(I * 3 + 1),
+            Z => partial_products(I * 3 + 2),
+            S => partial_sum_1(I)
+        );
+    end generate GEN_CSA;
 
-    REG_EXP_X : REG
-    generic map(N => 8)
-    port map(
-        CLK => CLK,
-        D => EXP_X_P_to_R2,
-        Q => EXP_X_R2_to_C,
-        RST => RST
-    );
+    gen_partial_sum_1_fixed : for i in 0 to 7 generate
+        partial_sum_1_fixed(i) <= partial_sum_1(i)(47 downto 0);
+    end generate gen_partial_sum_1_fixed;
 
-    REG_EXP_Y : REG
-    generic map(N => 8)
-    port map(
-        CLK => CLK,
-        D => EXP_Y_P_to_R2,
-        Q => EXP_Y_R2_to_C,
-        RST => RST
-    );
+    partial_sum_1_fixed(8) <= "000000000000000000000000000000000000000000000000"; --initialize the last partial sum to 48 zeros
 
-    REG_FIXED_MANT_X : REG
-    generic map(N => 24)
-    port map(
-        CLK => CLK,
-        D => FIXED_MANT_X_P_to_R2,
-        Q => FIXED_MANT_X_R2_to_C,
-        RST => RST
-    );
+    --solo la partial sum (7) potra avere 48 bit
+    GEN_CSA_2 : for J in 0 to 2 generate
+        CSA_2 : CSA
+        generic map(N => 48)
+        port map(
+            X => partial_sum_1_fixed(J * 3),
+            Y => partial_sum_1_fixed(J * 3 + 1),
+            Z => partial_sum_1_fixed(J * 3 + 2),
+            S => partial_sum_2(J)
+        );
+    end generate GEN_CSA_2;
 
-    REG_FIXED_MANT_Y : REG
-    generic map(N => 24)
-    port map(
-        CLK => CLK,
-        D => FIXED_MANT_Y_P_to_R2,
-        Q => FIXED_MANT_Y_R2_to_C,
-        RST => RST
-    );
+    gen_partial_sum_2_fixed : for i in 0 to 2 generate
+        partial_sum_2_fixed(i) <= partial_sum_2(i)(47 downto 0);
+    end generate gen_partial_sum_2_fixed;
 
-    -- CALC STAGE
-    U1 : CALC_STAGE port map(
-        FLAG => FLAG_R2_to_C,
-        S => S_R2_to_C,
-        EXP_X => EXP_X_R2_to_C,
-        EXP_Y => EXP_Y_R2_to_C,
-        FIXED_MANT_X => FIXED_MANT_X_R2_to_C,
-        FIXED_MANT_Y => FIXED_MANT_Y_R2_to_C,
-        S_OUT => S_C_to_R3,
-        FLAG_OUT => FLAG_C_to_R3,
-        P => MANT_C_to_R3,
-        exp_out => EXP_C_to_R3
-    );
-
-    -- R3
-    --REGs behind CALC stage and in front of OUTPUT stage
-    REG_S_OUT : REG_1bit port map(
-        CLK => CLK,
-        D => S_C_to_R3,
-        Q => S_R3_to_O,
-        RST => RST
-    );
-
-    REG_FLAG_OUT : REG
-    generic map(N => 2)
-    port map(
-        CLK => CLK,
-        D => FLAG_C_to_R3,
-        Q => FLAG_R3_to_O,
-        RST => RST
-    );
-
-    REG_P : REG
+    CSA_3 : CSA
     generic map(N => 48)
     port map(
-        CLK => CLK,
-        D => MANT_C_to_R3,
-        Q => MANT_R3_to_O,
-        RST => RST
+        X => partial_sum_2_fixed(0),
+        Y => partial_sum_2_fixed(1),
+        Z => partial_sum_2_fixed(2),
+        S => P_TEMP
     );
 
-    REG_EXP_OUT : REG
-    generic map(N => 10)
-    port map(
-        CLK => CLK,
-        D => EXP_C_to_R3,
-        Q => EXP_R3_to_O,
-        RST => RST
-    );
-
-    -- OUTPUT STAGE
-    U2 : OUTPUT_STAGE port map(
-        FLAG => FLAG_R3_to_O,
-        S => S_R3_to_O,
-        exp_out => EXP_R3_to_O,
-        P => MANT_R3_to_O,
-        RES_FINAL => RES_O_to_R4,
-        INVALID => INVALID_R4_to_E
-    );
-
-    --R4
-    --REGs behind OUTPUT stage and in front of end
-    REG_RES : REG
-    generic map(N => 32)
-    port map(
-        CLK => CLK,
-        D => RES_O_to_R4,
-        Q => RES_R4_to_E,
-        RST => RST
-    );
-
-    REG_INVALID : REG_1bit port map(
-        CLK => CLK,
-        D => INVALID_O_to_R4,
-        Q => INVALID_R4_to_E,
-        RST => RST
-    );
+    P <= P_TEMP(47 downto 0);
 
 end architecture RTL;
