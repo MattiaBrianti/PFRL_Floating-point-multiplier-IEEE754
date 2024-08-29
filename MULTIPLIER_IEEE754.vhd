@@ -49,10 +49,7 @@ architecture RTL of MULTIPLIER_IEEE754 is
     signal RES_O_to_R4 : STD_LOGIC_VECTOR (31 downto 0);
     signal INVALID_O_to_R4 : STD_LOGIC;
 
-    --signals that go from Reg4 to end
-    signal RES_R4_to_E : STD_LOGIC_VECTOR (31 downto 0);
-    signal INVALID_R4_to_E : STD_LOGIC;
-    component REG is
+    component REG_Nbit is
         generic (N : INTEGER := 32);
         port (
             CLK : in STD_LOGIC;
@@ -113,14 +110,14 @@ architecture RTL of MULTIPLIER_IEEE754 is
 begin
     --R1
     --REGs in front of prep stage
-    REG_X : REG port map(
+    REG_X : REG_Nbit port map(
         CLK => CLK,
         D => X,
         Q => X_R1_to_P,
         RST => RST
     );
 
-    REG_Y : REG port map(
+    REG_Y : REG_Nbit port map(
         CLK => CLK,
         D => Y,
         Q => Y_R1_to_P,
@@ -140,7 +137,7 @@ begin
 
     --R2
     --REGs behind PREP stage and in front of CALC stage
-    REG_FLAG : REG
+    REG_FLAG : REG_Nbit
     generic map(N => 2)
     port map(
         CLK => CLK,
@@ -156,7 +153,7 @@ begin
         RST => RST
     );
 
-    REG_EXP_X : REG
+    REG_EXP_X : REG_Nbit
     generic map(N => 8)
     port map(
         CLK => CLK,
@@ -165,7 +162,7 @@ begin
         RST => RST
     );
 
-    REG_EXP_Y : REG
+    REG_EXP_Y : REG_Nbit
     generic map(N => 8)
     port map(
         CLK => CLK,
@@ -174,7 +171,7 @@ begin
         RST => RST
     );
 
-    REG_FIXED_MANT_X : REG
+    REG_FIXED_MANT_X : REG_Nbit
     generic map(N => 24)
     port map(
         CLK => CLK,
@@ -183,7 +180,7 @@ begin
         RST => RST
     );
 
-    REG_FIXED_MANT_Y : REG
+    REG_FIXED_MANT_Y : REG_Nbit
     generic map(N => 24)
     port map(
         CLK => CLK,
@@ -215,7 +212,7 @@ begin
         RST => RST
     );
 
-    REG_FLAG_OUT : REG
+    REG_FLAG_OUT : REG_Nbit
     generic map(N => 2)
     port map(
         CLK => CLK,
@@ -224,7 +221,7 @@ begin
         RST => RST
     );
 
-    REG_P : REG
+    REG_P : REG_Nbit
     generic map(N => 48)
     port map(
         CLK => CLK,
@@ -233,7 +230,7 @@ begin
         RST => RST
     );
 
-    REG_EXP_OUT : REG
+    REG_EXP_OUT : REG_Nbit
     generic map(N => 10)
     port map(
         CLK => CLK,
@@ -248,26 +245,26 @@ begin
         S => S_R3_to_O,
         exp_out => EXP_R3_to_O,
         P => MANT_R3_to_O,
-        RES_FINAL => RES_O_to_R4,
-        INVALID => INVALID_R4_to_E
+        RES_FINAL => RESULT,
+        INVALID => INVALID
     );
 
     --R4
     --REGs behind OUTPUT stage and in front of end
-    REG_RES : REG
+    REG_RES : REG_Nbit
     generic map(N => 32)
     port map(
         CLK => CLK,
         D => RES_O_to_R4,
-        Q => RES_R4_to_E,
+        Q => RESULT,
         RST => RST
     );
 
     REG_INVALID : REG_1bit port map(
         CLK => CLK,
         D => INVALID_O_to_R4,
-        Q => INVALID_R4_to_E,
+        Q => INVALID,
         RST => RST
     );
-
+	 
 end architecture RTL;
