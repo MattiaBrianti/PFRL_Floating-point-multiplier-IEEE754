@@ -62,6 +62,15 @@ architecture RTL of MULTIPLIER_IEEE754 is
         );
     end component;
 
+    component REG_1bit is
+        port (
+            CLK : in STD_LOGIC;
+            D : in STD_LOGIC;
+            Q : out STD_LOGIC;
+            RST : in STD_LOGIC
+        );
+    end component;
+
     component PREP_STAGE is
         port (
             X : in STD_LOGIC_VECTOR(31 downto 0);
@@ -131,42 +140,52 @@ begin
 
     --R2
     --REGs behind PREP stage and in front of CALC stage
-    REG_FLAG : REG port map(
+    REG_FLAG : REG
+    generic map(N => 2)
+    port map(
         CLK => CLK,
         D => FLAG_P_to_R2,
         Q => FLAG_R2_to_C,
         RST => RST
     );
 
-    REG_S : REG port map(
+    REG_S : REG_1bit port map(
         CLK => CLK,
         D => S_P_to_R2,
         Q => S_R2_to_C,
         RST => RST
     );
 
-    REG_EXP_X : REG port map(
+    REG_EXP_X : REG
+    generic map(N => 8)
+    port map(
         CLK => CLK,
         D => EXP_X_P_to_R2,
         Q => EXP_X_R2_to_C,
         RST => RST
     );
 
-    REG_EXP_Y : REG port map(
+    REG_EXP_Y : REG
+    generic map(N => 8)
+    port map(
         CLK => CLK,
         D => EXP_Y_P_to_R2,
         Q => EXP_Y_R2_to_C,
         RST => RST
     );
 
-    REG_FIXED_MANT_X : REG port map(
+    REG_FIXED_MANT_X : REG
+    generic map(N => 24)
+    port map(
         CLK => CLK,
         D => FIXED_MANT_X_P_to_R2,
         Q => FIXED_MANT_X_R2_to_C,
         RST => RST
     );
 
-    REG_FIXED_MANT_Y : REG port map(
+    REG_FIXED_MANT_Y : REG
+    generic map(N => 24)
+    port map(
         CLK => CLK,
         D => FIXED_MANT_Y_P_to_R2,
         Q => FIXED_MANT_Y_R2_to_C,
@@ -189,28 +208,34 @@ begin
 
     -- R3
     --REGs behind CALC stage and in front of OUTPUT stage
-    REG_S_OUT : REG port map(
+    REG_S_OUT : REG_1bit port map(
         CLK => CLK,
         D => S_C_to_R3,
         Q => S_R3_to_O,
         RST => RST
     );
 
-    REG_FLAG_OUT : REG port map(
+    REG_FLAG_OUT : REG
+    generic map(N => 2)
+    port map(
         CLK => CLK,
         D => FLAG_C_to_R3,
         Q => FLAG_R3_to_O,
         RST => RST
     );
 
-    REG_P : REG port map(
+    REG_P : REG
+    generic map(N => 48)
+    port map(
         CLK => CLK,
         D => MANT_C_to_R3,
         Q => MANT_R3_to_O,
         RST => RST
     );
 
-    REG_EXP_OUT : REG port map(
+    REG_EXP_OUT : REG
+    generic map(N => 10)
+    port map(
         CLK => CLK,
         D => EXP_C_to_R3,
         Q => EXP_R3_to_O,
@@ -229,14 +254,16 @@ begin
 
     --R4
     --REGs behind OUTPUT stage and in front of end
-    REG_RES : REG port map(
+    REG_RES : REG
+    generic map(N => 32)
+    port map(
         CLK => CLK,
         D => RES_O_to_R4,
         Q => RES_R4_to_E,
         RST => RST
     );
 
-    REG_INVALID : REG port map(
+    REG_INVALID : REG_1bit port map(
         CLK => CLK,
         D => INVALID_O_to_R4,
         Q => INVALID_R4_to_E,

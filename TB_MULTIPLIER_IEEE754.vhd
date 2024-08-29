@@ -13,6 +13,8 @@ architecture behavior of TB_MULTIPLIER_IEEE754 is
         port (
             X : in STD_LOGIC_VECTOR(31 downto 0);
             Y : in STD_LOGIC_VECTOR(31 downto 0);
+            RST : in STD_LOGIC;
+            CLK : in STD_LOGIC;
             RESULT : out STD_LOGIC_VECTOR(31 downto 0);
             INVALID : out STD_LOGIC
         );
@@ -20,22 +22,41 @@ architecture behavior of TB_MULTIPLIER_IEEE754 is
     --Inputs
     signal X : STD_LOGIC_VECTOR(31 downto 0);
     signal Y : STD_LOGIC_VECTOR(31 downto 0);
-
+    signal RST : STD_LOGIC;
+    signal CLK : STD_LOGIC;
     --Outputs
     signal RESULT : STD_LOGIC_VECTOR(31 downto 0);
     signal INVALID : STD_LOGIC;
+
+    -- CLOCK PERIOD
+    constant CLK_PERIOD : TIME := 85 ns;
 begin
 
     -- Instantiate the Unit Under Test (UUT)
     uut : MULTIPLIER_IEEE754 port map(
         X => X,
         Y => Y,
+        RST => RST,
+        CLK => CLK,
         RESULT => RESULT,
         INVALID => INVALID
     );
 
+    CLK_PROCESS : process
+    begin
+        CLK <= '0';
+        wait for CLK_PERIOD/2;
+        CLK <= '1';
+        wait for CLK_PERIOD/2;
+    end process;
+
     process
     begin
+
+        RST <= '1';
+        wait for 500 ns;
+        RST <= '0';
+
         -- TEST 1 - NAN*NAN
         X <= "01111111101100000000000010000000";
         Y <= "01111111101100000011000010000000";

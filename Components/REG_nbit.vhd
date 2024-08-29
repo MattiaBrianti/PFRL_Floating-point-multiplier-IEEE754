@@ -1,22 +1,19 @@
--- Finished
-
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity register is
-	generic (N : INTEGER := 32);
+entity REG is
+	generic (N : INTEGER);
 	port (
 		CLK : in STD_LOGIC;
 		D : in STD_LOGIC_VECTOR (N - 1 downto 0);
 		Q : out STD_LOGIC_VECTOR (N - 1 downto 0);
 		RST : in STD_LOGIC
 	);
+end REG;
 
-end register;
+architecture RTL of REG is
 
-architecture register of register is
-
-	component D_FLIP_FLOP is
+	component FLIP_FLOP_D is
 		port (
 			CLK : in STD_LOGIC;
 			D : in STD_LOGIC;
@@ -27,13 +24,13 @@ architecture register of register is
 
 begin
 
-	gen_flipflop : for I in N - 1 downto 0 generate
-		d_ff : D_FLIP_FLOP
+	GEN_FFD : for I in N - 1 downto 0 generate
+		d_ff : FLIP_FLOP_D
 		port map(
 			CLK => CLK,
 			D => D (I),
 			Q => Q (I),
 			RST => RST
 		);
-	end generate gen_flipflop;
-end register;
+	end generate GEN_FFD;
+end RTL;
