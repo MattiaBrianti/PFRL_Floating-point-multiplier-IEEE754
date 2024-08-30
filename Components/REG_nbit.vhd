@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity REG is
+entity REG_Nbit is
 	generic (N : INTEGER);
 	port (
 		CLK : in STD_LOGIC;
@@ -9,9 +9,9 @@ entity REG is
 		Q : out STD_LOGIC_VECTOR (N - 1 downto 0);
 		RST : in STD_LOGIC
 	);
-end REG;
+end REG_Nbit;
 
-architecture RTL of REG is
+architecture RTL of REG_Nbit is
 
 	component FLIP_FLOP_D is
 		port (
