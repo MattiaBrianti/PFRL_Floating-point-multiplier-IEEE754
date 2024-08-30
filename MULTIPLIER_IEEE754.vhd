@@ -245,8 +245,8 @@ begin
         S => S_R3_to_O,
         exp_out => EXP_R3_to_O,
         P => MANT_R3_to_O,
-        RES_FINAL => RESULT,
-        INVALID => INVALID
+        RES_FINAL => RES_O_to_R4,
+        INVALID => INVALID_O_to_R4
     );
 
     --R4
@@ -266,5 +266,5 @@ begin
         Q => INVALID,
         RST => RST
     );
-	 
+
 end architecture RTL;
