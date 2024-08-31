@@ -29,7 +29,7 @@ architecture behavior of TB_MULTIPLIER_IEEE754 is
     signal INVALID : STD_LOGIC;
 
     -- CLOCK PERIOD
-    constant CLK_PERIOD : TIME := 84 ns;
+    constant CLK_PERIOD : TIME := 90 ns;
 begin
 
     -- Instantiate the Unit Under Test (UUT)
