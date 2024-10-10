@@ -5,12 +5,12 @@ entity PREP_STAGE is
     port (
         X : in STD_LOGIC_VECTOR(31 downto 0);
         Y : in STD_LOGIC_VECTOR(31 downto 0);
-        FLAG : out STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+        FLAG : out STD_LOGIC_VECTOR (1 downto 0);
         S : out STD_LOGIC;
         EXP_X : out STD_LOGIC_VECTOR (7 downto 0);
         EXP_Y : out STD_LOGIC_VECTOR (7 downto 0);
-        FIXED_MANT_X : out STD_LOGIC_VECTOR (23 downto 0); -- 24-bit mantissa
-        FIXED_MANT_Y : out STD_LOGIC_VECTOR (23 downto 0) -- 24-bit mantissa
+        FIXED_MANT_X : out STD_LOGIC_VECTOR (23 downto 0);
+        FIXED_MANT_Y : out STD_LOGIC_VECTOR (23 downto 0)
     );
 end entity PREP_STAGE;
 
@@ -25,11 +25,11 @@ architecture RTL of PREP_STAGE is
 
     component EDGE_CASES_CHECK is
         port (
-            EXP_X : in STD_LOGIC_VECTOR (7 downto 0); -- 8-bit exponent
-            EXP_Y : in STD_LOGIC_VECTOR (7 downto 0); -- 8-bit exponent
-            MANT_X : in STD_LOGIC_VECTOR (22 downto 0); -- 23-bit mantissa
-            MANT_Y : in STD_LOGIC_VECTOR (22 downto 0); -- 23-bit mantissa
-            FLAG : out STD_LOGIC_VECTOR (1 downto 0) -- 2-bit flag for INF, NAN, ZERO and DENORM
+            EXP_X : in STD_LOGIC_VECTOR (7 downto 0);
+            EXP_Y : in STD_LOGIC_VECTOR (7 downto 0);
+            MANT_X : in STD_LOGIC_VECTOR (22 downto 0);
+            MANT_Y : in STD_LOGIC_VECTOR (22 downto 0);
+            FLAG : out STD_LOGIC_VECTOR (1 downto 0)
         );
     end component;
 
@@ -48,13 +48,13 @@ architecture RTL of PREP_STAGE is
 
     component MANTIX_FIXER is
         port (
-            MANT_X : in STD_LOGIC_VECTOR (22 downto 0); -- 23-bit mantissa
-            MANT_Y : in STD_LOGIC_VECTOR (22 downto 0); -- 23-bit mantissa
-            EXP_X : in STD_LOGIC_VECTOR (7 downto 0); -- 8-bit exponent
-            EXP_Y : in STD_LOGIC_VECTOR (7 downto 0); -- 8-bit exponent
+            MANT_X : in STD_LOGIC_VECTOR (22 downto 0);
+            MANT_Y : in STD_LOGIC_VECTOR (22 downto 0);
+            EXP_X : in STD_LOGIC_VECTOR (7 downto 0);
+            EXP_Y : in STD_LOGIC_VECTOR (7 downto 0);
 
-            FIXED_MANT_X : out STD_LOGIC_VECTOR (23 downto 0); -- 24-bit mantissa
-            FIXED_MANT_Y : out STD_LOGIC_VECTOR (23 downto 0) -- 24-bit mantissa
+            FIXED_MANT_X : out STD_LOGIC_VECTOR (23 downto 0);
+            FIXED_MANT_Y : out STD_LOGIC_VECTOR (23 downto 0)
         );
     end component;
 

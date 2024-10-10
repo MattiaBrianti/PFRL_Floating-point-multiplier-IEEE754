@@ -37,7 +37,6 @@ begin
         FLAG => FLAG
     );
 
-    --TODO provare tutti i casi edge e caso non edge
     -- Stimulus process
     process
     begin

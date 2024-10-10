@@ -3,14 +3,14 @@ use ieee.std_logic_1164.all;
 
 entity CALC_STAGE is
     port (
-        FLAG : in STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+        FLAG : in STD_LOGIC_VECTOR (1 downto 0);
         S : in STD_LOGIC;
         EXP_X : in STD_LOGIC_VECTOR (7 downto 0);
         EXP_Y : in STD_LOGIC_VECTOR (7 downto 0);
-        FIXED_MANT_X : in STD_LOGIC_VECTOR (23 downto 0); -- 24-bit mantissa
-        FIXED_MANT_Y : in STD_LOGIC_VECTOR (23 downto 0); -- 24-bit mantissa
+        FIXED_MANT_X : in STD_LOGIC_VECTOR (23 downto 0);
+        FIXED_MANT_Y : in STD_LOGIC_VECTOR (23 downto 0);
         S_OUT : out STD_LOGIC;
-        FLAG_OUT : out STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+        FLAG_OUT : out STD_LOGIC_VECTOR (1 downto 0);
         P : out STD_LOGIC_VECTOR(47 downto 0);
         exp_out : out STD_LOGIC_VECTOR(9 downto 0)
     );

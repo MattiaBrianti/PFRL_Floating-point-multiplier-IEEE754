@@ -88,25 +88,25 @@ architecture RTL of MULTIPLIER_IEEE754 is
         port (
             X : in STD_LOGIC_VECTOR(31 downto 0);
             Y : in STD_LOGIC_VECTOR(31 downto 0);
-            FLAG : out STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+            FLAG : out STD_LOGIC_VECTOR (1 downto 0);
             S : out STD_LOGIC;
             EXP_X : out STD_LOGIC_VECTOR (7 downto 0);
             EXP_Y : out STD_LOGIC_VECTOR (7 downto 0);
-            FIXED_MANT_X : out STD_LOGIC_VECTOR (23 downto 0); -- 24-bit mantissa
-            FIXED_MANT_Y : out STD_LOGIC_VECTOR (23 downto 0) -- 24-bit mantissa
+            FIXED_MANT_X : out STD_LOGIC_VECTOR (23 downto 0);
+            FIXED_MANT_Y : out STD_LOGIC_VECTOR (23 downto 0)
         );
     end component;
 
     component CALC_STAGE is
         port (
-            FLAG : in STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+            FLAG : in STD_LOGIC_VECTOR (1 downto 0);
             S : in STD_LOGIC;
             EXP_X : in STD_LOGIC_VECTOR (7 downto 0);
             EXP_Y : in STD_LOGIC_VECTOR (7 downto 0);
-            FIXED_MANT_X : in STD_LOGIC_VECTOR (23 downto 0); -- 24-bit mantissa
-            FIXED_MANT_Y : in STD_LOGIC_VECTOR (23 downto 0); -- 24-bit mantissa
+            FIXED_MANT_X : in STD_LOGIC_VECTOR (23 downto 0);
+            FIXED_MANT_Y : in STD_LOGIC_VECTOR (23 downto 0);
             S_OUT : out STD_LOGIC;
-            FLAG_OUT : out STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+            FLAG_OUT : out STD_LOGIC_VECTOR (1 downto 0);
             P : out STD_LOGIC_VECTOR(47 downto 0);
             exp_out : out STD_LOGIC_VECTOR(9 downto 0)
         );
@@ -114,20 +114,20 @@ architecture RTL of MULTIPLIER_IEEE754 is
 
     component ROUNDER_STAGE is
         port (
-            FLAG : in STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+            FLAG : in STD_LOGIC_VECTOR (1 downto 0);
             S : in STD_LOGIC;
             exp_out : in STD_LOGIC_VECTOR(9 downto 0);
             P : in STD_LOGIC_VECTOR(47 downto 0);
             MANT_OUT: out STD_LOGIC_VECTOR(22 downto 0);
             RES_FINAL_1: out STD_LOGIC_VECTOR(9 downto 0);
-            FLAG_OUT : out STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+            FLAG_OUT : out STD_LOGIC_VECTOR (1 downto 0);
             S_OUT : out STD_LOGIC
         );
     end component;
     
     component OUTPUT_STAGE is
     port (
-        FLAG_OUT : in STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+        FLAG_OUT : in STD_LOGIC_VECTOR (1 downto 0);
         S_OUT : in STD_LOGIC;
         MANT_OUT: in STD_LOGIC_VECTOR(22 downto 0);
         RES_FINAL_1: in STD_LOGIC_VECTOR(9 downto 0);

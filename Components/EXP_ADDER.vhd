@@ -1,4 +1,3 @@
-
 library ieee;
 use ieee.std_logic_1164.all;
 
@@ -29,7 +28,6 @@ begin
     EXP_Y_CORRECT <= "00000001" when EXP_Y = "00000000" else
         EXP_Y;
 
-    -- Instantiate the CLA component
     U1 : CLA
     generic map(N => 8)
     port map(

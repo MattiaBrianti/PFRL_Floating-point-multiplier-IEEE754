@@ -11,7 +11,7 @@ entity RES_FIX is
 end entity RES_FIX;
 
 architecture RTL of RES_FIX is
-    signal CLA_result : STD_LOGIC_VECTOR(10 downto 0); -- Segnale intermedio da 11 bit
+    signal CLA_result : STD_LOGIC_VECTOR(10 downto 0);
 
     component CLA is
         generic (N : INTEGER := 10);
@@ -32,7 +32,6 @@ begin
         S => CLA_result
     );
 
-    -- Assegnazioni con corretta sintassi VHDL
     process (EXP_IN, MANT_IN, CLA_result)
     begin
         -- Caso Overflow

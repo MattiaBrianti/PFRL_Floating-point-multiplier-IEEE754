@@ -14,14 +14,14 @@ end entity BIAS_SUBTRACTOR;
 architecture RTL of BIAS_SUBTRACTOR is
 
     signal CS : STD_LOGIC_VECTOR(9 downto 0);
-    signal CLA_result : STD_LOGIC_VECTOR(N downto 0); -- Segnale intermedio da 11 bit
+    signal CLA_result : STD_LOGIC_VECTOR(N downto 0);
 
     component CLA is
         generic (N : INTEGER := 10);
         port (
             X : in STD_LOGIC_VECTOR(N - 1 downto 0);
             Y : in STD_LOGIC_VECTOR(N - 1 downto 0);
-            S : out STD_LOGIC_VECTOR(N downto 0) -- Output di 11 bit
+            S : out STD_LOGIC_VECTOR(N downto 0)
         );
     end component CLA;
 
@@ -34,7 +34,7 @@ begin
     port map(
         X => CS(N - 1 downto 0),
         Y => "1110000001",
-        S => CLA_result -- Mappiamo su CLA_result, che ha 11 bit
+        S => CLA_result
     );
 
     -- Ignoriamo il MSB, come richiesto dalla somma in complemento a 2

@@ -1,15 +1,13 @@
--- Finished and tested
-
 library ieee;
 use ieee.std_logic_1164.all;
 
 entity EDGE_CASES_CHECK is
     port (
-        EXP_X : in STD_LOGIC_VECTOR (7 downto 0); -- 8-bit exponent
-        EXP_Y : in STD_LOGIC_VECTOR (7 downto 0); -- 8-bit exponent
-        MANT_X : in STD_LOGIC_VECTOR (22 downto 0); -- 23-bit mantissa
-        MANT_Y : in STD_LOGIC_VECTOR (22 downto 0); -- 23-bit mantissa
-        FLAG : out STD_LOGIC_VECTOR (1 downto 0) -- 2-bit flag for INF, NAN, ZERO and DENORM
+        EXP_X : in STD_LOGIC_VECTOR (7 downto 0);
+        EXP_Y : in STD_LOGIC_VECTOR (7 downto 0);
+        MANT_X : in STD_LOGIC_VECTOR (22 downto 0);
+        MANT_Y : in STD_LOGIC_VECTOR (22 downto 0);
+        FLAG : out STD_LOGIC_VECTOR (1 downto 0)
     );
 end EDGE_CASES_CHECK;
 
@@ -18,9 +16,6 @@ end EDGE_CASES_CHECK;
 -- '01' infinity
 -- '10' Invalid (at least one NaN)
 -- '11' Zero (implies also BothDenormalized)
-
---Dubbi: Posso usare il diverso?
--- Come faccio a riconoscere una NoFlag? forse devo lasciare un caso per questa (tipo 00)
 
 architecture RTL of EDGE_CASES_CHECK is
 begin

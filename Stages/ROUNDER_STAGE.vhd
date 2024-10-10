@@ -3,13 +3,13 @@ use ieee.std_logic_1164.all;
 
 entity ROUNDER_STAGE is
     port (
-        FLAG : in STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+        FLAG : in STD_LOGIC_VECTOR (1 downto 0);
         S : in STD_LOGIC;
         exp_out : in STD_LOGIC_VECTOR(9 downto 0);
         P : in STD_LOGIC_VECTOR(47 downto 0);
         MANT_OUT: out STD_LOGIC_VECTOR(22 downto 0);
         RES_FINAL_1: out STD_LOGIC_VECTOR(9 downto 0);
-        FLAG_OUT : out STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+        FLAG_OUT : out STD_LOGIC_VECTOR (1 downto 0);
         S_OUT : out STD_LOGIC
     );
     end entity ROUNDER_STAGE;
@@ -30,7 +30,7 @@ entity ROUNDER_STAGE is
     component FINAL_EXP_CALC is
         generic (N : INTEGER := 24);
         port (
-            EXP : in STD_LOGIC_VECTOR(9 downto 0); -- è un numero con segno
+            EXP : in STD_LOGIC_VECTOR(9 downto 0);
             OFFSET : in STD_LOGIC_VECTOR(4 downto 0);
             SUB : in STD_LOGIC;
             S : out STD_LOGIC_VECTOR(9 downto 0)

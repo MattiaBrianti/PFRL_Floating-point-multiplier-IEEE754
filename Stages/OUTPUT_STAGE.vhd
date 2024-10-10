@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity OUTPUT_STAGE is
     port (
-        FLAG_OUT : in STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+        FLAG_OUT : in STD_LOGIC_VECTOR (1 downto 0);
         S_OUT : in STD_LOGIC;
         MANT_OUT: in STD_LOGIC_VECTOR(22 downto 0);
         RES_FINAL_1: in STD_LOGIC_VECTOR(9 downto 0);
