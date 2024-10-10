@@ -56,7 +56,7 @@ begin
         RST <= '1';
         wait for 35 ns;
         RST <= '0';
-        wait for 10 ns;
+        wait for 30 ns;
         
         -- TEST 1 - NAN*NAN
         X <= "01111111101100000000000010000000";
@@ -158,5 +158,3 @@ begin
         Y <= "00000000000001011000110110101100";
         wait;
     end process;
-
-end;
