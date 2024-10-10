@@ -39,15 +39,31 @@ architecture RTL of MULTIPLIER_IEEE754 is
     signal MANT_C_to_R3 : STD_LOGIC_VECTOR(47 downto 0);
     signal EXP_C_to_R3 : STD_LOGIC_VECTOR(9 downto 0);
 
-    --signals that go Reg3 to output stage
-    signal S_R3_to_O : STD_LOGIC;
-    signal FLAG_R3_to_O : STD_LOGIC_VECTOR(1 downto 0);
-    signal MANT_R3_to_O : STD_LOGIC_VECTOR(47 downto 0);
-    signal EXP_R3_to_O : STD_LOGIC_VECTOR(9 downto 0);
+    --signals that go Reg3 to Rounder stage
+    signal S_R3_to_RO : STD_LOGIC;
+    signal FLAG_R3_to_RO : STD_LOGIC_VECTOR(1 downto 0);
+    signal MANT_R3_to_RO : STD_LOGIC_VECTOR(47 downto 0);
+    signal EXP_R3_to_RO : STD_LOGIC_VECTOR(9 downto 0);
 
-    --signals that to output stage to R4
-    signal RES_O_to_R4 : STD_LOGIC_VECTOR (31 downto 0);
-    signal INVALID_O_to_R4 : STD_LOGIC;
+    --signals that to Rounder stage to Reg4
+    signal S_RO_to_R4 : STD_LOGIC;
+    signal FLAG_RO_to_R4 : STD_LOGIC_VECTOR(1 downto 0);
+    signal MANT_RO_to_R4 : STD_LOGIC_VECTOR(22 downto 0);
+    signal EXP_RO_to_R4 : STD_LOGIC_VECTOR(9 downto 0);
+
+    --signals that go from Reg4 to Output stage
+    signal S_R4_to_O : STD_LOGIC;
+    signal FLAG_R4_to_O : STD_LOGIC_VECTOR(1 downto 0);
+    signal MANT_R4_to_O : STD_LOGIC_VECTOR(22 downto 0);
+    signal EXP_R4_TO_O : STD_LOGIC_VECTOR(9 downto 0);
+
+    --signals that go from Output stage to Reg5
+    signal INVALID_O_to_R5 : STD_LOGIC;
+    signal RES_O_TO_R5 : STD_LOGIC_VECTOR(31 downto 0);
+    
+    --signals that go from Reg5 to End
+    signal INVALID_R5_TO_E : std_logic;
+    signal RESULT_R5_TO_E : std_logic_vector(31 downto 0);
 
     component REG_Nbit is
         generic (N : INTEGER := 32);
@@ -96,15 +112,28 @@ architecture RTL of MULTIPLIER_IEEE754 is
         );
     end component;
 
-    component OUTPUT_STAGE is
+    component ROUNDER_STAGE is
         port (
             FLAG : in STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
             S : in STD_LOGIC;
             exp_out : in STD_LOGIC_VECTOR(9 downto 0);
             P : in STD_LOGIC_VECTOR(47 downto 0);
-            RES_FINAL : out STD_LOGIC_VECTOR (31 downto 0);
-            INVALID : out STD_LOGIC
+            MANT_OUT: out STD_LOGIC_VECTOR(22 downto 0);
+            RES_FINAL_1: out STD_LOGIC_VECTOR(9 downto 0);
+            FLAG_OUT : out STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+            S_OUT : out STD_LOGIC
         );
+    end component;
+    
+    component OUTPUT_STAGE is
+    port (
+        FLAG_OUT : in STD_LOGIC_VECTOR (1 downto 0); -- 2-bit flag for INF, NAN, ZERO and DENORM
+        S_OUT : in STD_LOGIC;
+        MANT_OUT: in STD_LOGIC_VECTOR(22 downto 0);
+        RES_FINAL_1: in STD_LOGIC_VECTOR(9 downto 0);
+        RES_FINAL : out STD_LOGIC_VECTOR (31 downto 0);
+        INVALID : out STD_LOGIC
+    );
     end component;
 
 begin
@@ -204,11 +233,11 @@ begin
     );
 
     -- R3
-    --REGs behind CALC stage and in front of OUTPUT stage
+    --REGs behind CALC stage and in front of ROUNDER stage
     REG_S_OUT : REG_1bit port map(
         CLK => CLK,
         D => S_C_to_R3,
-        Q => S_R3_to_O,
+        Q => S_R3_to_RO,
         RST => RST
     );
 
@@ -217,7 +246,7 @@ begin
     port map(
         CLK => CLK,
         D => FLAG_C_to_R3,
-        Q => FLAG_R3_to_O,
+        Q => FLAG_R3_to_RO,
         RST => RST
     );
 
@@ -226,7 +255,7 @@ begin
     port map(
         CLK => CLK,
         D => MANT_C_to_R3,
-        Q => MANT_R3_to_O,
+        Q => MANT_R3_to_RO,
         RST => RST
     );
 
@@ -235,36 +264,85 @@ begin
     port map(
         CLK => CLK,
         D => EXP_C_to_R3,
-        Q => EXP_R3_to_O,
+        Q => EXP_R3_to_RO,
+        RST => RST
+    );
+
+    -- ROUNDER STAGE
+    U2 : ROUNDER_STAGE port map(
+        FLAG => FLAG_R3_to_RO,
+        S => S_R3_to_RO,
+        exp_out => EXP_R3_to_RO,
+        P => MANT_R3_to_RO,
+        MANT_OUT => MANT_RO_to_R4,
+        RES_FINAL_1 => EXP_RO_to_R4,
+        FLAG_OUT => FLAG_RO_to_R4,
+        S_OUT => S_RO_to_R4
+    );
+
+    -- R4
+    --REGs behind ROUNDER stage and in front of OUTPUT stage
+    REG_MANT_OUT : REG_Nbit
+    generic map(N => 23)
+    port map(
+        CLK => CLK,
+        D => MANT_RO_to_R4,
+        Q => MANT_R4_to_O,
+        RST => RST
+    );
+
+    REG_RES_FINAL_1 : REG_Nbit
+    generic map(N => 10)
+    port map(
+        CLK => CLK,
+        D => EXP_RO_to_R4,
+        Q => EXP_R4_TO_O,
+        RST => RST
+    );
+
+    REG_S_1 : REG_1bit port map(
+        CLK => CLK,
+        D => S_RO_to_R4,
+        Q => S_R4_to_O,
+        RST => RST
+    );
+
+    REG_FLAG_1 : REG_Nbit
+	     generic map(N => 2)
+		  port map(
+        CLK => CLK,
+        D => FLAG_RO_to_R4,
+        Q => FLAG_R4_to_O,
         RST => RST
     );
 
     -- OUTPUT STAGE
-    U2 : OUTPUT_STAGE port map(
-        FLAG => FLAG_R3_to_O,
-        S => S_R3_to_O,
-        exp_out => EXP_R3_to_O,
-        P => MANT_R3_to_O,
-        RES_FINAL => RES_O_to_R4,
-        INVALID => INVALID_O_to_R4
+    U3 : OUTPUT_STAGE port map(
+        FLAG_OUT => FLAG_R4_to_O,
+        S_OUT => S_R4_to_O,
+        MANT_OUT => MANT_R4_to_O,
+        RES_FINAL_1 => EXP_R4_TO_O,
+        RES_FINAL => RES_O_TO_R5,
+        INVALID => INVALID_O_to_R5
     );
 
-    --R4
-    --REGs behind OUTPUT stage and in front of end
-    REG_RES : REG_Nbit
-    generic map(N => 32)
-    port map(
+    --R5
+    --REG behind OUTPUT stage
+    REG_RESULT : REG_Nbit port map(
         CLK => CLK,
-        D => RES_O_to_R4,
-        Q => RESULT,
+        D => RES_O_TO_R5,
+        Q => RESULT_R5_TO_E,
         RST => RST
     );
 
     REG_INVALID : REG_1bit port map(
         CLK => CLK,
-        D => INVALID_O_to_R4,
-        Q => INVALID,
+        D => INVALID_O_to_R5,
+        Q => INVALID_R5_TO_E,
         RST => RST
     );
+    
+    INVALID <= INVALID_R5_TO_E;
+    RESULT <= RESULT_R5_TO_E;
 
 end architecture RTL;

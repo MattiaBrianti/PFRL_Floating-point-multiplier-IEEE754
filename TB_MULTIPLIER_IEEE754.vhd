@@ -29,7 +29,7 @@ architecture behavior of TB_MULTIPLIER_IEEE754 is
     signal INVALID : STD_LOGIC;
 
     -- CLOCK PERIOD
-    constant CLK_PERIOD : TIME := 90 ns;
+    constant CLK_PERIOD : TIME := 45 ns;
 begin
 
     -- Instantiate the Unit Under Test (UUT)
@@ -54,9 +54,10 @@ begin
     begin
 
         RST <= '1';
-        wait for 80 ns;
+        wait for 35 ns;
         RST <= '0';
-        wait for 50 ns;
+        wait for 10 ns;
+        
         -- TEST 1 - NAN*NAN
         X <= "01111111101100000000000010000000";
         Y <= "01111111101100000011000010000000";
