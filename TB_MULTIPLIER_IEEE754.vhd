@@ -29,7 +29,7 @@ architecture behavior of TB_MULTIPLIER_IEEE754 is
     signal INVALID : STD_LOGIC;
 
     -- CLOCK PERIOD
-    constant CLK_PERIOD : TIME := 45 ns;
+    constant CLK_PERIOD : TIME := 70 ns;
 begin
 
     -- Instantiate the Unit Under Test (UUT)
@@ -54,68 +54,68 @@ begin
     begin
 
         RST <= '1';
-        wait for 35 ns;
+        wait for 50 ns;
         RST <= '0';
-        wait for 30 ns;
+        wait for 50 ns;
         
         -- TEST 1 - NAN*NAN
         X <= "01111111101100000000000010000000";
         Y <= "01111111101100000011000010000000";
         wait for CLK_PERIOD;
-
-        -- TEST 2 - NAN*NORM
-        X <= "01111111101100000000000010000000";
-        Y <= "01111010101100000011000010000000";
-        wait for CLK_PERIOD;
-
-        -- TEST 3 - NAN * DENORM
-        X <= "01111111101100000000000010000000";
-        Y <= "00000000001100000011000010000000";
-        wait for CLK_PERIOD;
-
-        -- TEST 4 - NAN * 0
-        X <= "01111111101100000000000010000000";
-        Y <= "00000000000000000000000000000000";
-        wait for CLK_PERIOD;
-
-        -- TEST 5 - NAN * INF
-        X <= "01111111101100000000000010000000";
-        Y <= "01111111100000000000000000000000";
-        wait for CLK_PERIOD;
-
-        -- TEST 6 - 0 * INF
-        X <= "00000000000000000000000000000000";
-        Y <= "01111111100000000000000000000000";
-        wait for CLK_PERIOD;
-
-        -- TEST 7 - +INF * +INF
+        
+        -- TEST 2 - +INF * +INF
         X <= "01111111100000000000000000000000";
         Y <= "01111111100000000000000000000000";
         wait for CLK_PERIOD;
+        
+        -- TEST 3 - NAN*NORM
+        X <= "01111111101100000000000010000000";
+        Y <= "01111010101100000011000010000000";
+        wait for CLK_PERIOD;
+        
+        -- TEST 4 - +INF * DENORM
+        X <= "01111111100000000000000000000000";
+        Y <= "00000000001100000011000010000000";
+        wait for CLK_PERIOD;
 
-        -- TEST 8 - -INF*-INF
+        -- TEST 5 - NAN * DENORM
+        X <= "01111111101100000000000010000000";
+        Y <= "00000000001100000011000010000000";
+        wait for CLK_PERIOD;
+        
+        -- TEST 6 - +INF * NORM
+        X <= "01111111100000000000000000000000";
+        Y <= "01111010101100000011000010000000";
+        wait for CLK_PERIOD;
+        
+        -- TEST 7 - NAN * 0
+        X <= "01111111101100000000000010000000";
+        Y <= "00000000000000000000000000000000";
+        wait for CLK_PERIOD;
+        
+         -- TEST 8 - +INF * -INF
+        X <= "01111111100000000000000000000000";
+        Y <= "11111111100000000000000000000000";
+        wait for CLK_PERIOD;
+
+        -- TEST 9 - NAN * INF
+        X <= "01111111101100000000000010000000";
+        Y <= "01111111100000000000000000000000";
+        wait for CLK_PERIOD;
+
+        -- TEST 10 - -INF*-INF
         X <= "11111111100000000000000000000000";
         Y <= "11111111100000000000000000000000";
         wait for CLK_PERIOD;
 
-        -- TEST 9 - +INF * DENORM
-        X <= "01111111100000000000000000000000";
-        Y <= "00000000001100000011000010000000";
-        wait for CLK_PERIOD;
-
-        -- TEST 10 - +INF * NORM
-        X <= "01111111100000000000000000000000";
-        Y <= "01111010101100000011000010000000";
-        wait for CLK_PERIOD;
-
-        -- TEST 11 - +INF * -INF
-        X <= "01111111100000000000000000000000";
-        Y <= "11111111100000000000000000000000";
-        wait for CLK_PERIOD;
-
-        -- TEST 12 - 0 * 0
+        -- TEST 11 - 0 * 0
         X <= "00000000000000000000000000000000";
         Y <= "00000000000000000000000000000000";
+        wait for CLK_PERIOD;
+        
+         -- TEST 12 - 0 * INF
+        X <= "00000000000000000000000000000000";
+        Y <= "01111111100000000000000000000000";
         wait for CLK_PERIOD;
 
         -- TEST 13 - 0 * NORM
@@ -143,7 +143,7 @@ begin
         Y <= "01111111011111111111111111111111";
         wait for CLK_PERIOD;
 
-        -- TEST 18 - NORM * DENORM = DENORM
+        -- TEST 18 - NORM * DENORM = DENORM (EXP: 0 00000000 01000001000011001110010)
         X <= "01000000100000000000000110000100";
         Y <= "00000000000010000010000110000100";
         wait for CLK_PERIOD;
@@ -153,8 +153,10 @@ begin
         Y <= "00000000000000100100011111111111";
         wait for CLK_PERIOD;
 
-        -- TEST 20 - NORM * DENORM = NORM
+        -- TEST 20 - NORM * DENORM = NORM (EXP: 0 00000101 00111000011000010001010)
         X <= "01000011111000010000000000000000";
         Y <= "00000000000001011000110110101100";
         wait;
     end process;
+
+end;
