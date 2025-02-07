@@ -29,17 +29,13 @@ architecture RTL of CALC_STAGE is
     end component;
 
     component MANTIX_MULTIPLIER is
-        generic (
-            N : POSITIVE := 24
-        );
         port (
-            A, B : in STD_LOGIC_VECTOR(N - 1 downto 0);
-            P : out STD_LOGIC_VECTOR(2 * N - 1 downto 0)
+        A, B : in STD_LOGIC_VECTOR(23 downto 0);
+        P : out STD_LOGIC_VECTOR(47 downto 0)
         );
     end component;
 
     component BIAS_SUBTRACTOR is
-        generic (N : INTEGER := 10);
         port (
             exp_sum : in STD_LOGIC_VECTOR(8 downto 0);
             exp_out : out STD_LOGIC_VECTOR(9 downto 0)
@@ -56,7 +52,6 @@ begin
     );
 
     U2 : MANTIX_MULTIPLIER
-    generic map(N => 24)
     port map(
         A => FIXED_MANT_X,
         B => FIXED_MANT_Y,
@@ -64,7 +59,6 @@ begin
     );
 
     U3 : BIAS_SUBTRACTOR
-    generic map(N => 10)
     port map(
         exp_sum => exp_sum,
         exp_out => exp_out

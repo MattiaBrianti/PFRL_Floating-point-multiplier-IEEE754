@@ -2,43 +2,39 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 entity BIAS_SUBTRACTOR is
-    generic (N : INTEGER := 10);
     port (
         exp_sum : in STD_LOGIC_VECTOR(8 downto 0);
         exp_out : out STD_LOGIC_VECTOR(9 downto 0)
     );
 end entity BIAS_SUBTRACTOR;
 
--- Ritardo stimato di 12 ns (8,362ns exactly)
-
 architecture RTL of BIAS_SUBTRACTOR is
 
     signal CS : STD_LOGIC_VECTOR(9 downto 0);
-    signal CLA_result : STD_LOGIC_VECTOR(N downto 0);
 
-    component CLA is
-        generic (N : INTEGER := 10);
-        port (
-            X : in STD_LOGIC_VECTOR(N - 1 downto 0);
-            Y : in STD_LOGIC_VECTOR(N - 1 downto 0);
-            S : out STD_LOGIC_VECTOR(N downto 0)
-        );
-    end component CLA;
+    component CLA_10 is
+	port (
+    X, Y : in  std_logic_vector(9 downto 0);
+    S    : out std_logic_vector(9 downto 0);
+    Cin  : in  std_logic;
+    Cout : out std_logic
+  );
+end component;
 
 begin
-
+    -- Concateniamo uno zero per avere la somma di 2 numeri da 10 bit
+    -- Lo 0 non avrà conseguenza poichè EXP_SUM è un numero unsigned
     CS <= '0' & exp_sum(8 downto 0);
 
-    U1 : CLA
-    generic map(N => 10)
+    -- Effettuiamo la differenza tra EXP_SUM e 127
+    -- Ci restituisce l'esponente signed
+    Adder : CLA_10
     port map(
-        X => CS(N - 1 downto 0),
+        X => CS(9 downto 0),
         Y => "1110000001",
-        S => CLA_result
+		CIN => '0',
+        S => exp_out,
+		COUT => open
     );
-
-    -- Ignoriamo il MSB, come richiesto dalla somma in complemento a 2
-    -- Quindi in uscita avremo il risultato in complemento a 2
-    exp_out <= CLA_result(N - 1 downto 0);
 
 end architecture RTL;

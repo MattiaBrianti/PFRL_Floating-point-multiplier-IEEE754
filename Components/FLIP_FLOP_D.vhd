@@ -12,7 +12,7 @@ end FLIP_FLOP_D;
 
 architecture RTL of FLIP_FLOP_D is
 begin
-	FF : process (CLK)
+	FF : process (CLK, RST)
 	begin
 		if (RST = '1') then
 			Q <= '0';

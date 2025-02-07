@@ -2,57 +2,49 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 entity FINAL_EXP_CALC is
-    generic (N : INTEGER := 24);
     port (
         EXP : in STD_LOGIC_VECTOR(9 downto 0); -- è un numero con segno
-        OFFSET : in STD_LOGIC_VECTOR(4 downto 0);
+        OFFSET : in STD_LOGIC_VECTOR(4 downto 0); -- in uscita da rounder
         SUB : in STD_LOGIC;
-        S : out STD_LOGIC_VECTOR(9 downto 0)
+        S : out STD_LOGIC_VECTOR(9 downto 0) -- in uscita avremo l' esponente che in alcuni casi verrà modificato da RES_FIX
     );
 end entity FINAL_EXP_CALC;
 
--- Ritardo stimato 16 ns (10,803 ns exactly)
 
 architecture RTL of FINAL_EXP_CALC is
+    
+    component CLA_10 is
+    port (
+    X, Y : in  std_logic_vector(9 downto 0);
+    S    : out std_logic_vector(9 downto 0);
+    Cin  : in  std_logic;
+    Cout : out std_logic
+  );
+  end component CLA_10;
 
-    signal PADDED_OFFSET_ADD : STD_LOGIC_VECTOR(9 downto 0);
-    signal PADDED_OFFSET_SUB : STD_LOGIC_VECTOR(9 downto 0);
-    signal S_1 : STD_LOGIC_VECTOR(11 downto 0);
-    signal S_2 : STD_LOGIC_VECTOR(11 downto 0);
-
-    component CSA is
-
-        generic (N : INTEGER := 10);
-
-        port (
-            X : in STD_LOGIC_VECTOR (N - 1 downto 0);
-            Y : in STD_LOGIC_VECTOR (N - 1 downto 0);
-            Z : in STD_LOGIC_VECTOR (N - 1 downto 0);
-            S : out STD_LOGIC_VECTOR (N + 1 downto 0)
-        );
-    end component CSA;
+    signal S_OUT : std_logic_vector(9 downto 0);
+	 signal PADDED_OFFSET: std_logic_vector(9 downto 0);
+	 signal EXTENDED_SUB: std_logic_vector(9 downto 0);
+	 signal FINAL_OFFSET: std_logic_vector(9 downto 0);
+	 signal SUB_SIG: std_logic;
 
 begin
-    PADDED_OFFSET_ADD <= "00000" & OFFSET;
-    PADDED_OFFSET_SUB <= not PADDED_OFFSET_ADD;
+    PADDED_OFFSET <= "00000" & OFFSET; --Paddiamo l'offset per arrivare a 10bit
+	 EXTENDED_SUB <= (others => SUB); --Creiamo un vettore fatto da tutti i bit uguali a sub
+	 FINAL_OFFSET <= EXTENDED_SUB xor PADDED_OFFSET; -- se SUB è 1 lo xor mi complementa ad uno l'OFFSET, se è 0 lo lascia al valore originale
+	 SUB_SIG <= SUB;
 
-    CSA_SUB : CSA
-    generic map(N => 10)
+	process(S_OUT)
+	begin
+		S <= S_OUT;
+	end process;
+	
+    CLA_ADD : CLA_10
     port map(
         X => EXP,
-        Y => PADDED_OFFSET_SUB,
-        Z => "0000000001",
-        S => S_1
+        Y => FINAL_OFFSET,
+        Cin => SUB_SIG,
+        S => S_OUT,
+        Cout => open
     );
-    CSA_ADD : CSA
-    generic map(N => 10)
-    port map(
-        X => EXP,
-        Y => PADDED_OFFSET_ADD,
-        Z => "0000000000",
-        S => S_2
-    );
-
-    S <= (S_1(9 downto 0)) when SUB = '1' else
-        (S_2(9 downto 0));
 end architecture RTL;
