@@ -1,7 +1,5 @@
 # Floating-Point Multiplier IEEE754
 
-![GitHub repo](https://img.shields.io/github/stars/MattiaBrianti/PFRL_Floating-point-multiplier-IEEE754?style=social)
-
 ## 📌 Overview
 This repository contains the implementation of a **floating-point multiplier** compliant with the **IEEE754** single-precision standard. The project efficiently handles normalized and denormalized operands, as well as special values such as **NaN (Not a Number), infinity, and zero** through a **pipelined architecture**.
 
