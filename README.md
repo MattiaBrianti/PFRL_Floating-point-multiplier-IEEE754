@@ -4,10 +4,10 @@
 This repository contains the implementation of a **floating-point multiplier** compliant with the **IEEE754** single-precision standard. The project efficiently handles normalized and denormalized operands, as well as special values such as **NaN (Not a Number), infinity, and zero** through a **pipelined architecture**. This work is the final project for the *Digital Logic Design course*.
 
 ## ✨ Features
-- ✅ Supports single-precision **IEEE754 floating-point multiplication**
-- ✅ **Pipelined architecture** for optimized performance
-- ✅ **Handling of edge cases**: zero, infinity, NaN, overflow, and underflow
-- ✅ Fully tested with a **comprehensive test bench**
+✅ Supports single-precision **IEEE754 floating-point multiplication**
+✅ **Pipelined architecture** for optimized performance
+✅ **Handling of edge cases**: zero, infinity, NaN, overflow, and underflow
+✅ Fully tested with a **comprehensive test bench**
 
 ## 🚀 Getting Started
 ### Prerequisites
@@ -30,9 +30,9 @@ The system is divided into **three main stages**:
 
 ## 🧪 Testing
 The project has been tested using multiple **edge cases**, ensuring correct functionality:
-- 🔹 **Standard multiplications**
-- 🔹 **Special numbers handling (NaN, zero, infinity)**
-- 🔹 **Overflow and underflow conditions**
+🔹 **Standard multiplications**
+🔹 **Special numbers handling (NaN, zero, infinity)**
+🔹 **Overflow and underflow conditions**
 
 ## 🏆 Evaluation
 This project received a final grade of **30 cum laude**.
