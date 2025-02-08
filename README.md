@@ -1,7 +1,7 @@
 # Floating-Point Multiplier IEEE754
 
 ## 📌 Overview
-This repository contains the implementation of a **floating-point multiplier** compliant with the **IEEE754** single-precision standard. The project efficiently handles normalized and denormalized operands, as well as special values such as **NaN (Not a Number), infinity, and zero** through a **pipelined architecture**.
+This repository contains the implementation of a **floating-point multiplier** compliant with the **IEEE754** single-precision standard. The project efficiently handles normalized and denormalized operands, as well as special values such as **NaN (Not a Number), infinity, and zero** through a **pipelined architecture**. This work is the final project for the **Digital Logic Design course*.
 
 ## ✨ Features
 - ✅ Supports single-precision **IEEE754 floating-point multiplication**
